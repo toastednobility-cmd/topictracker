@@ -24,7 +24,7 @@
         .accordion-content { transition: max-height 0.2s ease-out; }
     </style>
 </head>
-<body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 min-h-screen pb-16 transition-colors duration-200">
+<body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 min-h-screen pb-24 transition-colors duration-200">
 
     <!-- Header Navigation -->
     <header class="bg-slate-900 dark:bg-slate-900 text-white shadow-lg sticky top-0 z-50 border-b border-slate-800">
@@ -38,12 +38,15 @@
             </div>
 
             <!-- Tab Switcher Navigation -->
-            <div class="flex bg-slate-800 p-1 rounded-lg border border-slate-700">
-                <button onclick="switchTab('tracker')" id="tabBtnTracker" class="px-4 py-1.5 rounded-md text-sm font-semibold bg-indigo-600 text-white shadow transition">
-                    📋 Specification Tracker
+            <div class="flex bg-slate-800 p-1 rounded-lg border border-slate-700 flex-wrap gap-1">
+                <button onclick="switchTab('tracker')" id="tabBtnTracker" class="px-3 py-1.5 rounded-md text-xs font-semibold bg-indigo-600 text-white shadow transition">
+                    📋 Spec Tracker
                 </button>
-                <button onclick="switchTab('timetable')" id="tabBtnTimetable" class="px-4 py-1.5 rounded-md text-sm font-semibold text-slate-300 hover:text-white transition">
-                    📅 Multi-Week Timetable
+                <button onclick="switchTab('timetable')" id="tabBtnTimetable" class="px-3 py-1.5 rounded-md text-xs font-semibold text-slate-300 hover:text-white transition">
+                    📅 Timetable & Overflow
+                </button>
+                <button onclick="switchTab('analytics')" id="tabBtnAnalytics" class="px-3 py-1.5 rounded-md text-xs font-semibold text-slate-300 hover:text-white transition">
+                    📈 Progress Over Time
                 </button>
             </div>
 
@@ -142,13 +145,13 @@
         </div>
 
         <!-- ==================== TAB 2: TIMETABLE VIEW ==================== -->
-        <div id="viewTimetable" class="hidden space-y-6">
+        <div id="viewTimetable" class="hidden space-y-6 pb-48">
             <div class="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 p-6 space-y-6">
                 <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                     <div>
                         <h2 class="text-xl font-bold text-slate-900 dark:text-white">Multi-Week Revision Plan (Starting Next Monday up to Dec 11)</h2>
                         <p class="text-sm text-slate-500 dark:text-slate-400">
-                            <strong>Mon / Wed / Fri:</strong> Amber topics • <strong>Tue / Thu:</strong> Red topics • <strong>Sat / Sun:</strong> Open study slots
+                            <strong>Mon / Wed / Fri:</strong> Amber topics • <strong>Tue / Thu:</strong> Red topics • <strong>Sat / Sun:</strong> Weekend open slots
                         </p>
                     </div>
                     <button onclick="renderTimetable()" class="px-3 py-1.5 bg-indigo-600 text-white text-xs font-semibold rounded-lg hover:bg-indigo-500 shadow">
@@ -159,6 +162,58 @@
                 <!-- Multi-Week Container -->
                 <div id="weeksContainer" class="space-y-8">
                     <!-- Dynamic Weeks Injected Here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Docked/Sticky Overflow Panel for Easy Drag/Drop or Dropdown Selection -->
+        <div id="dockedOverflowPanel" class="hidden fixed bottom-0 left-0 right-0 z-40 bg-slate-900 text-white border-t border-slate-800 p-3 shadow-2xl transition-all">
+            <div class="max-w-7xl mx-auto space-y-2">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <span class="font-bold text-sm text-indigo-400">⚡ Docked Overflow Topics</span>
+                        <span id="overflowCountBadge" class="px-2 py-0.5 bg-indigo-950 border border-indigo-700 text-indigo-300 font-bold text-xs rounded-full">0</span>
+                        <span class="text-xs text-slate-400 hidden md:inline">• Drag into weekend slots or select slot from dropdown</span>
+                    </div>
+                    <button onclick="toggleOverflowPanelExpand()" id="overflowExpandBtn" class="text-xs bg-slate-800 hover:bg-slate-700 px-2.5 py-1 rounded text-slate-300 font-semibold">Collapse Panel 🔽</button>
+                </div>
+                <div id="dockedOverflowList" class="flex gap-3 overflow-x-auto py-1 max-h-40 scrollbar-thin">
+                    <!-- Overflow items rendered horizontally -->
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== TAB 3: ANALYTICS / PROGRESS OVER TIME ==================== -->
+        <div id="viewAnalytics" class="hidden space-y-6">
+            <div class="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 p-6 space-y-6">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                    <div>
+                        <h2 class="text-xl font-bold text-slate-900 dark:text-white">Cumulative Progress Over Time</h2>
+                        <p class="text-sm text-slate-500 dark:text-slate-400">Track historical revision progress across any custom date range.</p>
+                    </div>
+                    <button onclick="recordSnapshot()" class="px-3 py-1.5 bg-indigo-600 text-white text-xs font-semibold rounded-lg hover:bg-indigo-500 shadow">
+                        📸 Record Today's Snapshot
+                    </button>
+                </div>
+
+                <!-- Custom Date Range Filters -->
+                <div class="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl border border-slate-200 dark:border-slate-700 flex flex-col md:flex-row items-end gap-4 text-xs font-semibold">
+                    <div class="flex flex-col gap-1 w-full md:w-auto">
+                        <label class="text-slate-500 dark:text-slate-400">From Date:</label>
+                        <input type="date" id="analyticsStartDate" onchange="renderAnalytics()" class="px-3 py-1.5 rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200">
+                    </div>
+                    <div class="flex flex-col gap-1 w-full md:w-auto">
+                        <label class="text-slate-500 dark:text-slate-400">To Date:</label>
+                        <input type="date" id="analyticsEndDate" onchange="renderAnalytics()" class="px-3 py-1.5 rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200">
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="clearAnalyticsDateRange()" class="px-3 py-2 bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 rounded hover:bg-slate-300 transition">Clear Date Filter</button>
+                    </div>
+                </div>
+
+                <!-- History Chart / Table -->
+                <div id="analyticsContent" class="space-y-4">
+                    <!-- Injected via JS -->
                 </div>
             </div>
         </div>
@@ -652,6 +707,10 @@
 
         let appData = {};
         let activeFilters = new Set();
+        let customWeekendAssignments = {}; 
+        let historySnapshots = [];
+        let isPanelExpanded = true;
+        let availableWeekendSlots = [];
 
         const WEEKLY_TEMPLATE = [
             { day: 'Monday', ragType: 'AMBER', slots: ['5:30 - 6:15 PM', '8:15 - 9:00 PM'] },
@@ -666,20 +725,33 @@
         function switchTab(tab) {
             const tracker = document.getElementById('viewTracker');
             const timetable = document.getElementById('viewTimetable');
+            const analytics = document.getElementById('viewAnalytics');
+            const dockedPanel = document.getElementById('dockedOverflowPanel');
             const btnTracker = document.getElementById('tabBtnTracker');
             const btnTimetable = document.getElementById('tabBtnTimetable');
+            const btnAnalytics = document.getElementById('tabBtnAnalytics');
+
+            tracker.classList.add('hidden');
+            timetable.classList.add('hidden');
+            analytics.classList.add('hidden');
+            dockedPanel.classList.add('hidden');
+
+            btnTracker.className = "px-3 py-1.5 rounded-md text-xs font-semibold text-slate-300 hover:text-white transition";
+            btnTimetable.className = "px-3 py-1.5 rounded-md text-xs font-semibold text-slate-300 hover:text-white transition";
+            btnAnalytics.className = "px-3 py-1.5 rounded-md text-xs font-semibold text-slate-300 hover:text-white transition";
 
             if (tab === 'tracker') {
                 tracker.classList.remove('hidden');
-                timetable.classList.add('hidden');
-                btnTracker.className = "px-4 py-1.5 rounded-md text-sm font-semibold bg-indigo-600 text-white shadow transition";
-                btnTimetable.className = "px-4 py-1.5 rounded-md text-sm font-semibold text-slate-300 hover:text-white transition";
-            } else {
-                tracker.classList.add('hidden');
+                btnTracker.className = "px-3 py-1.5 rounded-md text-xs font-semibold bg-indigo-600 text-white shadow transition";
+            } else if (tab === 'timetable') {
                 timetable.classList.remove('hidden');
-                btnTracker.className = "px-4 py-1.5 rounded-md text-sm font-semibold text-slate-300 hover:text-white transition";
-                btnTimetable.className = "px-4 py-1.5 rounded-md text-sm font-semibold bg-indigo-600 text-white shadow transition";
+                dockedPanel.classList.remove('hidden');
+                btnTimetable.className = "px-3 py-1.5 rounded-md text-xs font-semibold bg-indigo-600 text-white shadow transition";
                 renderTimetable();
+            } else {
+                analytics.classList.remove('hidden');
+                btnAnalytics.className = "px-3 py-1.5 rounded-md text-xs font-semibold bg-indigo-600 text-white shadow transition";
+                renderAnalytics();
             }
         }
 
@@ -708,10 +780,13 @@
         function initApp() {
             initDarkMode();
 
-            const saved = localStorage.getItem('abingdon_gcse_tracker_v9');
+            const saved = localStorage.getItem('abingdon_gcse_tracker_v11');
             if (saved) {
                 try {
-                    appData = JSON.parse(saved);
+                    const parsed = JSON.parse(saved);
+                    appData = parsed.appData || {};
+                    customWeekendAssignments = parsed.customWeekendAssignments || {};
+                    historySnapshots = parsed.historySnapshots || [];
                 } catch(e) {
                     appData = {};
                 }
@@ -730,7 +805,12 @@
         }
 
         function saveState() {
-            localStorage.setItem('abingdon_gcse_tracker_v9', JSON.stringify(appData));
+            const payload = {
+                appData: appData,
+                customWeekendAssignments: customWeekendAssignments,
+                historySnapshots: historySnapshots
+            };
+            localStorage.setItem('abingdon_gcse_tracker_v11', JSON.stringify(payload));
             calculateOverallStats();
             updateSubjectBars();
         }
@@ -881,7 +961,6 @@
             });
         }
 
-        // Interleaved Round-Robin Subject Pool Generator
         function getTopicsByRAG(targetRAG) {
             let subjectGroups = {};
             SPEC_DATA.forEach(subj => {
@@ -929,9 +1008,72 @@
             return candidate;
         }
 
+        // Drag and Drop & Assignment Logic
+        function handleDragStart(e, topicKey) {
+            e.dataTransfer.setData('text/plain', topicKey);
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+        }
+
+        function handleDrop(e, slotUniqueId) {
+            e.preventDefault();
+            const topicKey = e.dataTransfer.getData('text/plain');
+            if (topicKey) {
+                assignTopicToSlot(topicKey, slotUniqueId);
+            }
+        }
+
+        function assignTopicToSlot(topicKey, slotUniqueId) {
+            if (!slotUniqueId) return;
+            customWeekendAssignments[slotUniqueId] = topicKey;
+            saveState();
+            renderTimetable();
+        }
+
+        function removeCustomAssignment(slotUniqueId) {
+            delete customWeekendAssignments[slotUniqueId];
+            saveState();
+            renderTimetable();
+        }
+
+        function findTopicDetailsByKey(key) {
+            for (let subj of SPEC_DATA) {
+                for (let tIdx = 0; tIdx < subj.topics.length; tIdx++) {
+                    let topic = subj.topics[tIdx];
+                    for (let sIdx = 0; sIdx < topic.subtopics.length; sIdx++) {
+                        if (getItemKey(subj.id, tIdx, sIdx) === key) {
+                            return {
+                                key: key,
+                                subjectId: subj.id,
+                                subjectName: subj.name,
+                                subtopic: topic.subtopics[sIdx]
+                            };
+                        }
+                    }
+                }
+            }
+            return null;
+        }
+
+        function toggleOverflowPanelExpand() {
+            isPanelExpanded = !isPanelExpanded;
+            const dockedList = document.getElementById('dockedOverflowList');
+            const expandBtn = document.getElementById('overflowExpandBtn');
+            if (isPanelExpanded) {
+                dockedList.classList.remove('hidden');
+                expandBtn.textContent = 'Collapse Panel 🔽';
+            } else {
+                dockedList.classList.add('hidden');
+                expandBtn.textContent = 'Expand Panel 🔼';
+            }
+        }
+
         function renderTimetable() {
             const container = document.getElementById('weeksContainer');
             container.innerHTML = '';
+            availableWeekendSlots = [];
 
             const redPool = getTopicsByRAG('RED');
             const amberPool = getTopicsByRAG('AMBER');
@@ -939,11 +1081,9 @@
             let assignedRedKeys = new Set();
             let assignedAmberKeys = new Set();
 
-            // Calculate starting from NEXT Monday
             let today = new Date();
             let currWeekStart = new Date(today);
             let dayOfWeek = currWeekStart.getDay();
-            // Days until next Monday (if today is Monday, get next Monday)
             let daysUntilNextMon = (1 + 7 - dayOfWeek) % 7;
             if (daysUntilNextMon === 0) daysUntilNextMon = 7;
             currWeekStart.setDate(currWeekStart.getDate() + daysUntilNextMon);
@@ -973,22 +1113,20 @@
                 let daysGridHTML = '<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-7 gap-3">';
 
                 WEEKLY_TEMPLATE.forEach((dayConfig, dIdx) => {
-                    // Compute exact date for this specific day in the current week
                     let dayDate = new Date(currWeekStart);
                     dayDate.setDate(dayDate.getDate() + dIdx);
-
-                    // Check if dayDate matches today's date (ignoring time)
                     let isToday = dayDate.toDateString() === new Date().toDateString();
 
                     let headerBadge = '';
                     if (dayConfig.ragType === 'RED') headerBadge = '<span class="px-2 py-0.5 text-[10px] bg-rose-100 text-rose-800 dark:bg-rose-950 dark:text-rose-300 rounded font-bold">RED Focus</span>';
                     else if (dayConfig.ragType === 'AMBER') headerBadge = '<span class="px-2 py-0.5 text-[10px] bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300 rounded font-bold">AMBER Focus</span>';
-                    else headerBadge = '<span class="px-2 py-0.5 text-[10px] bg-indigo-100 text-indigo-800 dark:bg-indigo-950 dark:text-indigo-300 rounded font-bold">Free Study</span>';
+                    else headerBadge = '<span class="px-2 py-0.5 text-[10px] bg-indigo-100 text-indigo-800 dark:bg-indigo-950 dark:text-indigo-300 rounded font-bold">Weekend</span>';
 
                     let slotsHTML = '';
 
-                    dayConfig.slots.forEach(timeLabel => {
+                    dayConfig.slots.forEach((timeLabel, sIdx) => {
                         let assignedTopic = null;
+                        const slotUniqueId = `w${weekCounter}_d${dIdx}_s${sIdx}`;
 
                         if (dayConfig.ragType === 'RED') {
                             assignedTopic = getDiverseNextTopic(redPool, assignedRedKeys, lastRedSubject);
@@ -1002,12 +1140,23 @@
                                 assignedAmberKeys.add(assignedTopic.key);
                                 lastAmberSubject = assignedTopic.subjectId;
                             }
+                        } else if (dayConfig.ragType === 'OPEN') {
+                            availableWeekendSlots.push({
+                                id: slotUniqueId,
+                                label: `Wk ${weekCounter} ${dayConfig.day} (${timeLabel})`
+                            });
+
+                            if (customWeekendAssignments[slotUniqueId]) {
+                                assignedTopic = findTopicDetailsByKey(customWeekendAssignments[slotUniqueId]);
+                            }
                         }
 
                         if (assignedTopic) {
                             const currentStatus = getItemData(assignedTopic.key).status;
+
                             slotsHTML += `
-                                <div class="p-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg space-y-1.5 shadow-sm">
+                                <div class="p-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg space-y-1.5 shadow-sm relative group">
+                                    ${dayConfig.ragType === 'OPEN' ? `<button onclick="removeCustomAssignment('${slotUniqueId}')" class="absolute top-1 right-1 text-slate-400 hover:text-rose-500 text-xs font-bold px-1" title="Remove assigned topic">×</button>` : ''}
                                     <div class="flex items-center justify-between text-[11px] font-semibold text-indigo-600 dark:text-indigo-400">
                                         <span>⏰ ${timeLabel}</span>
                                         <span class="text-slate-400 font-normal">${assignedTopic.subjectName}</span>
@@ -1026,17 +1175,16 @@
                             `;
                         } else {
                             slotsHTML += `
-                                <div class="p-2.5 bg-white/60 dark:bg-slate-900/40 border border-dashed border-slate-300 dark:border-slate-700 rounded-lg space-y-1">
+                                <div ondragover="handleDragOver(event)" ondrop="handleDrop(event, '${slotUniqueId}')" class="p-3 bg-white/60 dark:bg-slate-900/40 border-2 border-dashed border-indigo-300 dark:border-indigo-800 rounded-lg space-y-1 text-center hover:bg-indigo-50/50 transition">
                                     <div class="text-[11px] font-semibold text-slate-500 dark:text-slate-400">⏰ ${timeLabel}</div>
-                                    <p class="text-xs text-slate-400 italic">
-                                        ${dayConfig.ragType === 'OPEN' ? 'Self-directed revision' : `All ${dayConfig.ragType.toLowerCase()} topics assigned!`}
+                                    <p class="text-[11px] text-indigo-600 dark:text-indigo-400 font-medium italic">
+                                        📥 Drop topic here
                                     </p>
                                 </div>
                             `;
                         }
                     });
 
-                    // Highlight card if it is today
                     let cardClasses = isToday 
                         ? "bg-white dark:bg-slate-800/80 border-2 border-indigo-500 shadow-md ring-2 ring-indigo-500/20 rounded-xl p-3 flex flex-col gap-3 relative"
                         : "bg-white dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/60 rounded-xl p-3 flex flex-col gap-3 relative";
@@ -1066,60 +1214,165 @@
                 weekCounter++;
             }
 
-            // Render Leftover / Unassigned Topics List
+            // Render Leftover / Unassigned Topics List into Docked Bottom Panel
             let leftoverRed = redPool.filter(item => !assignedRedKeys.has(item.key));
             let leftoverAmber = amberPool.filter(item => !assignedAmberKeys.has(item.key));
+            let allUnassigned = [...leftoverRed, ...leftoverAmber].filter(item => {
+                return !Object.values(customWeekendAssignments).includes(item.key);
+            });
 
-            if (leftoverRed.length > 0 || leftoverAmber.length > 0) {
-                let overflowDiv = document.createElement('div');
-                overflowDiv.className = "bg-rose-50 dark:bg-rose-950/30 border border-rose-200 dark:border-rose-900 rounded-2xl p-5 space-y-3";
-                
-                let listHTML = `<h4 class="font-bold text-sm text-rose-800 dark:text-rose-300">⚠️ Overflow / Unassigned Topics (Exceeds scheduled slots before Dec 11)</h4><ul class="space-y-2 text-xs text-slate-700 dark:text-slate-300">`;
-                
-                leftoverRed.forEach(item => {
+            document.getElementById('overflowCountBadge').textContent = allUnassigned.length;
+            const dockedList = document.getElementById('dockedOverflowList');
+            dockedList.innerHTML = '';
+
+            if (allUnassigned.length === 0) {
+                dockedList.innerHTML = '<span class="text-xs text-slate-400 italic py-2">🎉 All topics successfully assigned!</span>';
+            } else {
+                allUnassigned.forEach(item => {
                     const currentStatus = getItemData(item.key).status;
-                    listHTML += `
-                        <li class="flex items-center justify-between bg-white dark:bg-slate-900 p-2.5 rounded-lg border border-rose-200 dark:border-rose-900 shadow-sm">
-                            <div class="flex items-center gap-2">
-                                <span class="px-1.5 py-0.5 bg-rose-200 text-rose-900 font-bold rounded text-[10px]">RED</span> 
-                                <span><strong>${item.subjectName}:</strong> ${item.subtopic}</span>
-                            </div>
-                            <select onchange="setRAGFromTimetable('${item.key}', this.value)" class="text-[11px] px-2 py-1 rounded border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-semibold focus:outline-none">
-                                <option value="RED" ${currentStatus === 'RED' ? 'selected' : ''}>🔴 Red</option>
-                                <option value="AMBER" ${currentStatus === 'AMBER' ? 'selected' : ''}>🟡 Amber</option>
-                                <option value="GREEN" ${currentStatus === 'GREEN' ? 'selected' : ''}>🟢 Green</option>
-                                <option value="NONE" ${currentStatus === 'NONE' ? 'selected' : ''}>⚪ Unrated</option>
-                            </select>
-                        </li>
-                    `;
-                });
+                    let badgeBg = currentStatus === 'RED' ? 'bg-rose-950 text-rose-300 border-rose-800' : 'bg-amber-950 text-amber-300 border-amber-800';
 
-                leftoverAmber.forEach(item => {
-                    const currentStatus = getItemData(item.key).status;
-                    listHTML += `
-                        <li class="flex items-center justify-between bg-white dark:bg-slate-900 p-2.5 rounded-lg border border-amber-200 dark:border-amber-900 shadow-sm">
-                            <div class="flex items-center gap-2">
-                                <span class="px-1.5 py-0.5 bg-amber-200 text-amber-900 font-bold rounded text-[10px]">AMBER</span> 
-                                <span><strong>${item.subjectName}:</strong> ${item.subtopic}</span>
-                            </div>
-                            <select onchange="setRAGFromTimetable('${item.key}', this.value)" class="text-[11px] px-2 py-1 rounded border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-semibold focus:outline-none">
-                                <option value="RED" ${currentStatus === 'RED' ? 'selected' : ''}>🔴 Red</option>
-                                <option value="AMBER" ${currentStatus === 'AMBER' ? 'selected' : ''}>🟡 Amber</option>
-                                <option value="GREEN" ${currentStatus === 'GREEN' ? 'selected' : ''}>🟢 Green</option>
-                                <option value="NONE" ${currentStatus === 'NONE' ? 'selected' : ''}>⚪ Unrated</option>
-                            </select>
-                        </li>
-                    `;
-                });
+                    let slotOptions = availableWeekendSlots.map(s => `<option value="${s.id}">${s.label}</option>`).join('');
 
-                listHTML += `</ul>`;
-                overflowDiv.innerHTML = listHTML;
-                container.appendChild(overflowDiv);
+                    const topicCard = document.createElement('div');
+                    topicCard.draggable = true;
+                    topicCard.ondragstart = (e) => handleDragStart(e, item.key);
+                    topicCard.className = "bg-slate-800 border border-slate-700 hover:border-indigo-500 rounded-lg p-2.5 min-w-[260px] max-w-[280px] shrink-0 space-y-1.5 cursor-grab active:cursor-grabbing shadow transition";
+
+                    topicCard.innerHTML = `
+                        <div class="flex items-center justify-between text-[10px]">
+                            <span class="px-1.5 py-0.5 border ${badgeBg} font-bold rounded">${currentStatus}</span>
+                            <span class="text-slate-400 font-semibold truncate">${item.subjectName}</span>
+                        </div>
+                        <p class="text-xs font-medium text-slate-200 line-clamp-2" title="${item.subtopic}">${item.subtopic}</p>
+                        <div class="flex items-center gap-1 pt-1">
+                            <select onchange="assignTopicToSlot('${item.key}', this.value)" class="w-full text-[10px] px-1.5 py-1 bg-slate-900 border border-slate-700 text-slate-300 rounded focus:outline-none">
+                                <option value="">➕ Assign to Slot...</option>
+                                ${slotOptions}
+                            </select>
+                        </div>
+                    `;
+
+                    dockedList.appendChild(topicCard);
+                });
             }
         }
 
         function setRAGFromTimetable(key, status) {
             setRAG(null, key, status);
+            renderTimetable();
+        }
+
+        function recordSnapshot() {
+            let total = 0, green = 0, amber = 0, red = 0, unrated = 0;
+            SPEC_DATA.forEach(subj => {
+                subj.topics.forEach((topic, tIdx) => {
+                    topic.subtopics.forEach((_, sIdx) => {
+                        total++;
+                        const status = getItemData(getItemKey(subj.id, tIdx, sIdx)).status;
+                        if (status === 'GREEN') green++;
+                        else if (status === 'AMBER') amber++;
+                        else if (status === 'RED') red++;
+                        else unrated++;
+                    });
+                });
+            });
+
+            const todayISO = new Date().toISOString().slice(0, 10);
+            const todayStr = new Date().toLocaleDateString(undefined, {month: 'short', day: 'numeric', year: 'numeric'});
+            
+            historySnapshots = historySnapshots.filter(s => s.isoDate !== todayISO);
+            historySnapshots.push({
+                isoDate: todayISO,
+                date: todayStr,
+                total: total,
+                green: green,
+                amber: amber,
+                red: red,
+                unrated: unrated,
+                percentage: total ? Math.round((green / total) * 100) : 0
+            });
+
+            saveState();
+            renderAnalytics();
+            alert(`Snapshot for ${todayStr} successfully recorded!`);
+        }
+
+        function clearAnalyticsDateRange() {
+            document.getElementById('analyticsStartDate').value = '';
+            document.getElementById('analyticsEndDate').value = '';
+            renderAnalytics();
+        }
+
+        function renderAnalytics() {
+            const container = document.getElementById('analyticsContent');
+            if (historySnapshots.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-12 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-dashed border-slate-300 dark:border-slate-700 text-slate-500 space-y-3">
+                        <p class="text-sm">No progress snapshots recorded yet.</p>
+                        <button onclick="recordSnapshot()" class="px-3 py-1.5 bg-indigo-600 text-white text-xs font-semibold rounded-lg hover:bg-indigo-500 shadow">Record First Snapshot</button>
+                    </div>
+                `;
+                return;
+            }
+
+            const startVal = document.getElementById('analyticsStartDate').value;
+            const endVal = document.getElementById('analyticsEndDate').value;
+
+            let filteredSnapshots = historySnapshots.filter(snap => {
+                const snapDate = snap.isoDate || snap.date;
+                if (startVal && snapDate < startVal) return false;
+                if (endVal && snapDate > endVal) return false;
+                return true;
+            });
+
+            if (filteredSnapshots.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-8 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-500 text-sm">
+                        No snapshots found within the selected date range.
+                    </div>
+                `;
+                return;
+            }
+
+            let html = `
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs border-collapse">
+                        <thead>
+                            <tr class="bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-b border-slate-200 dark:border-slate-700">
+                                <th class="p-3">Date</th>
+                                <th class="p-3">Mastered (Green)</th>
+                                <th class="p-3">In Progress (Amber)</th>
+                                <th class="p-3">Needs Attention (Red)</th>
+                                <th class="p-3">Unrated</th>
+                                <th class="p-3">Mastery %</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-200 dark:divide-slate-800">
+            `;
+
+            filteredSnapshots.forEach(snap => {
+                html += `
+                    <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/40">
+                        <td class="p-3 font-semibold text-slate-900 dark:text-white">${snap.date}</td>
+                        <td class="p-3 text-emerald-600 font-bold">${snap.green}</td>
+                        <td class="p-3 text-amber-600 font-bold">${snap.amber}</td>
+                        <td class="p-3 text-rose-600 font-bold">${snap.red}</td>
+                        <td class="p-3 text-slate-500">${snap.unrated}</td>
+                        <td class="p-3 font-bold text-indigo-600 dark:text-indigo-400">
+                            <div class="flex items-center gap-2">
+                                <div class="w-24 bg-slate-200 dark:bg-slate-700 h-2 rounded-full overflow-hidden">
+                                    <div class="bg-emerald-500 h-full" style="width: ${snap.percentage}%"></div>
+                                </div>
+                                <span>${snap.percentage}%</span>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            html += `</tbody></table></div>`;
+            container.innerHTML = html;
         }
 
         function renderApp() {
@@ -1302,7 +1555,12 @@
         }
 
         function exportData() {
-            const blob = new Blob([JSON.stringify(appData, null, 2)], { type: 'application/json' });
+            const payload = {
+                appData: appData,
+                customWeekendAssignments: customWeekendAssignments,
+                historySnapshots: historySnapshots
+            };
+            const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
@@ -1316,7 +1574,10 @@
             const reader = new FileReader();
             reader.onload = function(e) {
                 try {
-                    appData = JSON.parse(e.target.result);
+                    const parsed = JSON.parse(e.target.result);
+                    appData = parsed.appData || parsed;
+                    customWeekendAssignments = parsed.customWeekendAssignments || {};
+                    historySnapshots = parsed.historySnapshots || [];
                     saveState();
                     renderApp();
                     alert('Revision data successfully imported!');
@@ -1328,8 +1589,10 @@
         }
 
         function resetData() {
-            if (confirm('Are you sure you want to reset all RAG ratings, stars, and notes?')) {
+            if (confirm('Are you sure you want to reset all RAG ratings, stars, timetable assignments, and history snapshots?')) {
                 appData = {};
+                customWeekendAssignments = {};
+                historySnapshots = [];
                 saveState();
                 renderApp();
             }
