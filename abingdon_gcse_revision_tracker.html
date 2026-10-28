@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Abingdon School GCSE Revision Tracker</title>
+    <title>Abingdon GCSE Revision Tracker</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -16,24 +16,23 @@
         .btn-amber-active { background-color: #f59e0b; color: white; }
         .btn-green-active { background-color: #10b981; color: white; }
         
-        /* Smooth transition for accordion */
         .accordion-content { transition: max-height 0.2s ease-out; }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-800 min-h-screen pb-16">
 
-    <!-- Top Navigation Bar -->
+    <!-- Header Navigation -->
     <header class="bg-slate-900 text-white shadow-lg sticky top-0 z-50">
-        <div class="max-w-7xl mx-mx-auto px-4 py-4 sm:px-6 lg:px-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div class="max-w-7xl mx-auto px-4 py-4 sm:px-6 lg:px-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div class="flex items-center gap-3">
                 <div class="bg-indigo-600 p-2 rounded-lg font-bold text-xl">AS</div>
                 <div>
-                    <h1 class="text-xl font-bold tracking-tight">Abingdon School GCSE Tracker</h1>
-                    <p class="text-xs text-slate-400">Complete Specification Revision Tracker</p>
+                    <h1 class="text-xl font-bold tracking-tight">Abingdon School GCSE Revision Tracker</h1>
+                    <p class="text-xs text-slate-400">7 Core Subjects Specification Checklist</p>
                 </div>
             </div>
 
-            <!-- Global Controls -->
+            <!-- Global Action Controls -->
             <div class="flex flex-wrap items-center gap-2 text-sm">
                 <button onclick="toggleAllAccordions(true)" class="bg-slate-800 hover:bg-slate-700 px-3 py-1.5 rounded border border-slate-700 text-slate-200">Expand All</button>
                 <button onclick="toggleAllAccordions(false)" class="bg-slate-800 hover:bg-slate-700 px-3 py-1.5 rounded border border-slate-700 text-slate-200">Collapse All</button>
@@ -47,10 +46,10 @@
         </div>
     </header>
 
-    <!-- Main Container -->
+    <!-- Main Content Area -->
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
 
-        <!-- Overall Progress Dashboard -->
+        <!-- Progress Overview Dashboard -->
         <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 mb-6">
             <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-4">
                 <div>
@@ -72,21 +71,21 @@
             </div>
         </div>
 
-        <!-- Filter & Search Bar -->
+        <!-- Filter & Search Controls -->
         <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-4 mb-6 flex flex-col md:flex-row gap-4 items-center justify-between">
             <!-- Search -->
             <div class="w-full md:w-1/3">
-                <input type="text" id="searchInput" oninput="applyFilters()" placeholder="Search specification topics..." class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                <input type="text" id="searchInput" oninput="applyFilters()" placeholder="Search topics, key terms or notes..." class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
             </div>
 
-            <!-- Subject Select -->
+            <!-- Subject Select Dropdown -->
             <div class="w-full md:w-1/4">
                 <select id="subjectFilter" onchange="applyFilters()" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white">
-                    <option value="ALL">All 10 Subjects</option>
+                    <option value="ALL">All 7 Subjects</option>
                 </select>
             </div>
 
-            <!-- RAG Filter Buttons -->
+            <!-- Filter Buttons -->
             <div class="flex items-center gap-1.5 w-full md:w-auto justify-start md:justify-end flex-wrap text-xs">
                 <span class="text-slate-500 font-medium mr-1">Filter:</span>
                 <button onclick="setRAGFilter('ALL')" id="filter-ALL" class="px-2.5 py-1.5 rounded font-medium border bg-slate-800 text-white border-slate-800">All</button>
@@ -98,16 +97,76 @@
         </div>
 
         <!-- Subjects Container -->
-        <div id="subjectsContainer" class="space-y-6">
-            <!-- Dynamic Content Injected Here -->
-        </div>
+        <div id="subjectsContainer" class="space-y-6"></div>
 
     </main>
 
-    <!-- App Logic & Specification Data -->
+    <!-- JavaScript Data and Application Logic -->
     <script>
-        // Specifications Data Mapping
         const SPEC_DATA = [
+            {
+                id: 'geography',
+                name: 'Geography',
+                examBoard: 'Edexcel IGCSE (4GE1)',
+                topics: [
+                    {
+                        title: 'Paper 1: Section A - Physical Environments (Rivers, Coasts, Hazards)',
+                        subtopics: [
+                            '1.1 River Environments: Hydrological cycle stores, transfers, drainage basin features (source, mouth, watershed)',
+                            '1.2 River Environments: Bradshaw model long profile changes (velocity, discharge, gradient, load size)',
+                            '1.3 River Environments: River erosion processes (hydraulic action, abrasion, attrition, solution) & transport processes (traction, saltation, suspension, solution)',
+                            '1.4 River Environments: Formation of erosional landforms (waterfalls, interlocking spurs, gorges) & depositional landforms (meanders, oxbow lakes, levees, floodplains)',
+                            '1.5 River Environments: Causes of river flooding (physical vs human factors) & storm hydrographs (lag time, discharge)',
+                            '1.6 River Environments: Hard engineering (dams, channelisation) vs Soft engineering (afforestation, flood warning, floodplain zoning)',
+                            '1.7 Coastal Environments: Wave types (constructive vs destructive waves) & weathering (freeze-thaw, biological, chemical)',
+                            '1.8 Coastal Environments: Coastal erosion processes, longshore drift, & formation of erosional landforms (caves, arches, stacks, stumps, wave-cut platforms)',
+                            '1.9 Coastal Environments: Coastal deposition landforms (beaches, spits, bars, tombolos, salt marshes)',
+                            '1.10 Coastal Environments: Coastal management strategies (groynes, sea walls, riprap, beach nourishment, managed retreat)',
+                            '1.11 Hazardous Environments: Tropical cyclones formation, characteristics, structure & impacts (case study LIC vs HIC)',
+                            '1.12 Hazardous Environments: Plate tectonics, boundary types (destructive, constructive, conservative) & causes of earthquakes, volcanoes, tsunamis',
+                            '1.13 Hazardous Environments: Hazard management 3 Ps (Prediction, Preparation, Protection)'
+                        ]
+                    },
+                    {
+                        title: 'Paper 1: Section B - Physical Fieldwork Enquiry',
+                        subtopics: [
+                            'Fieldwork Enquiry: Primary data collection methods in physical environment (river velocity/width/depth OR beach profile/sediment size)',
+                            'Fieldwork Enquiry: Sampling strategies (random, systematic, stratified) & risk assessment',
+                            'Fieldwork Enquiry: Data presentation (graphs, maps) and statistical evaluation of results'
+                        ]
+                    },
+                    {
+                        title: 'Paper 2: Section A - Human Environments (Economic Activity, Rural & Urban)',
+                        subtopics: [
+                            '2.1 Economic Activity & Energy: Sectors of economy (primary, secondary, tertiary, quaternary) & Clark-Fisher model changes over time',
+                            '2.2 Economic Activity & Energy: Causes of industrial location & deindustrialisation in HICs',
+                            '2.3 Economic Activity & Energy: Energy demand, renewable vs non-renewable energy resources, energy security & sustainability',
+                            '2.4 Rural Environments: Rural areas in LICs vs HICs, agricultural systems (subsistence vs commercial farming)',
+                            '2.5 Rural Environments: Rural change, rural-urban migration in LICs, counter-urbanisation in HICs',
+                            '2.6 Urban Environments: Global urbanisation trends, megacities growth factors (natural increase & rural-urban migration)',
+                            '2.7 Urban Environments: Urban land use models (Burgess, Hoyt) & urban challenges in LICs/NEEs (squatter settlements, informal economy, pollution)',
+                            '2.8 Urban Environments: Sustainable urban strategies (transport, housing, green spaces case study)'
+                        ]
+                    },
+                    {
+                        title: 'Paper 2: Section B - Human Fieldwork Enquiry',
+                        subtopics: [
+                            'Human Fieldwork: Primary data collection methods (environmental quality surveys, land-use mapping, pedestrian counts, questionnaires)',
+                            'Human Fieldwork: Sampling methods, data presentation, drawing valid conclusions & evaluating enquiry limitations'
+                        ]
+                    },
+                    {
+                        title: 'Paper 2: Section C - Global Issues (Fragile Environments, Globalisation & Development)',
+                        subtopics: [
+                            '3.1 Fragile Environments & Climate Change: Causes & impacts of desertification and deforestation; sustainable management strategies',
+                            '3.2 Fragile Environments: Evidence for climate change, anthropogenic causes vs natural drivers, global responses',
+                            '3.3 Globalisation & Migration: Drivers of globalisation (TNCs, containerisation, communications); impacts on LICs and HICs',
+                            '3.4 Globalisation & Migration: Types of migration (economic, refugees), push and pull factors, impacts on origin and destination',
+                            '3.5 Development & Human Welfare: Measures of development (HDI, GNI per capita, infant mortality), development gap causes & strategies to reduce global inequality'
+                        ]
+                    }
+                ]
+            },
             {
                 id: 'biology',
                 name: 'Biology',
@@ -131,406 +190,73 @@
                         subtopics: [
                             '2.1 Level of organisation: Organelles, cells, tissues, organs, systems',
                             '2.2 Cell structure: Nucleus, cytoplasm, cell membrane, cell wall, mitochondria, chloroplasts, ribosomes, vacuole',
-                            '2.3 Functions of cell organelles',
-                            '2.4 Differences between plant and animal cells',
-                            '2.5B Importance of cell differentiation in developing specialised cells',
-                            '2.6B Advantages and disadvantages of using stem cells in medicine',
-                            '2.7 Chemical elements in carbohydrates, proteins and lipids',
-                            '2.8 Structure of carbohydrates, proteins and lipids as large molecules built from smaller units',
+                            '2.3 Functions of cell organelles & differences between plant and animal cells',
+                            '2.5B Cell differentiation & advantages/disadvantages of stem cells in medicine',
+                            '2.7 Biological molecules: Carbohydrates, proteins, lipids elements & structure',
                             '2.9 Practical: Test for glucose (Benedict\'s), starch (Iodine), protein (Biuret), lipids (Ethanol emulsion)',
-                            '2.10 Role of enzymes as biological catalysts in metabolic reactions',
-                            '2.11 Effect of temperature on enzyme activity and active site shape (denaturation)',
-                            '2.12 Practical: Investigate temperature effect on enzyme activity',
-                            '2.13 Effect of pH on enzyme function',
-                            '2.14B Practical: Investigate pH effect on enzyme activity',
-                            '2.15 Diffusion, Osmosis and Active Transport definitions and mechanisms',
-                            '2.16 Factors affecting rate of movement: Surface area to volume ratio, distance, temperature, concentration gradient',
-                            '2.17 Practical: Investigate diffusion and osmosis in living and non-living systems (visking tubing, potato cylinders)',
-                            '2.18 Photosynthesis: Conversion of light energy into chemical energy in glucose',
-                            '2.19 Word and balanced chemical equations for photosynthesis',
-                            '2.20 Effect of CO2 concentration, light intensity and temperature on photosynthesis rate',
-                            '2.21 Leaf structure and adaptations: Waxy cuticle, upper epidermis, palisade mesophyll, spongy mesophyll, stomata, guard cells, xylem, phloem',
-                            '2.22 Plant mineral requirements: Magnesium ions (chlorophyll), Nitrate ions (amino acids)',
-                            '2.23 Practical: Investigate photosynthesis (starch test in leaf, requirement of light, CO2 and chlorophyll, oxygen evolution)',
-                            '2.24 Balanced human diet: Carbohydrates, lipids, proteins, vitamins A, C, D, mineral ions (calcium, iron), water, dietary fibre',
-                            '2.25 Sources and functions of dietary components',
-                            '2.26 Energy requirements varying with activity levels, age and pregnancy',
-                            '2.27 Human alimentary canal structure: Mouth, oesophagus, stomach, small intestine (duodenum, ileum), large intestine (colon, rectum), pancreas',
-                            '2.28 Peristalsis in the gut',
-                            '2.29 Digestive enzymes: Amylase, maltase, proteases (pepsin, trypsin), lipases',
-                            '2.30 Production of bile in liver, storage in gall bladder',
-                            '2.31 Roles of bile: Neutralising stomach acid, emulsifying lipids',
-                            '2.32 Structure of villus and adaptations of small intestine for absorption',
-                             me: '2.33B Practical: Investigate energy content in a food sample',
-                            '2.34 Respiration: ATP production from glucose',
-                            '2.35 ATP as energy currency for cellular processes',
-                            '2.36 Aerobic vs Anaerobic respiration',
-                            '2.37 Word and balanced symbol equations for aerobic respiration',
-                            '2.38 Word equations for anaerobic respiration in yeast, plants and animals',
-                            '2.39 Practical: Investigate CO2 and heat evolution from respiring seeds/organisms',
-                            '2.40B Gas exchange in plants: Role of diffusion',
-                            '2.41B Gas exchange in relation to respiration and photosynthesis during day/night',
-                            '2.42B Leaf adaptations for gas exchange: Stomata, internal air spaces',
-                            '2.43B Guard cells controlling stomatal opening/closure',
-                            '2.44B Net gas exchange depending on light intensity',
-                            '2.45B Practical: Investigate effect of light on net gas exchange using hydrogencarbonate indicator',
-                            '2.46 Human thorax structure: Ribs, intercostal muscles, diaphragm, trachea, bronchi, bronchioles, alveoli, pleural membranes',
-                            '2.47 Role of intercostal muscles and diaphragm in ventilation (inhalation & exhalation)',
-                            '2.48 Alveoli adaptations for gas exchange by diffusion',
-                            '2.49 Consequences of smoking: Cilia damage, bronchitis, emphysema, carbon monoxide binding to haemoglobin, CHD, cancer',
-                            '2.50 Practical: Investigate breathing rate before and after exercise / CO2 in exhaled air',
-                            '2.51 Need for transport systems in multicellular organisms vs unicellular organisms',
-                            '2.52 Role of phloem in translocation of sucrose and amino acids',
-                            '2.53 Role of xylem in transport of water and mineral ions from roots to shoots',
-                            '2.54 Water absorption by root hair cells via osmosis',
-                            '2.55 Transpiration definition and evaporation of water from leaf stomata',
-                            '2.56 Factors affecting transpiration rate: Light intensity, temperature, wind speed, humidity',
-                            '2.57 Practical: Investigate transpiration rate using a potometer under varying conditions',
-                            '2.58 Composition of blood: Red blood cells, white blood cells, platelets, plasma',
-                            '2.59 Role of blood plasma in transport (CO2, digested food, urea, hormones, heat energy)',
-                            '2.60 Adaptations of red blood cells for oxygen transport (haemoglobin, biconcave shape, no nucleus)',
-                            '2.61 White blood cells: Phagocytes (phagocytosis) and Lymphocytes (antibody production)',
-                            '2.62 Vaccination and memory cells for immunity',
-                            '2.63 Role of platelets in blood clotting to prevent blood loss and entry of microorganisms',
-                            '2.64 Structure and function of human heart and circulation system',
-                            '2.65 Heart rate response to adrenaline and exercise',
-                            '2.66 Coronary Heart Disease (CHD): Causes, risk factors (diet, smoking, stress, high blood pressure)',
-                            '2.67 Structure and function of blood vessels: Arteries, veins, capillaries',
-                            '2.68 General structure of circulation: Pulmonary, renal, hepatic circuits',
-                            '2.69 Waste products of metabolism: CO2 (lungs), Urea, excess water and salts (kidneys), Sweat (skin)',
-                            '2.70B Osmoregulation and excretion roles of kidneys',
-                            '2.71B Structure of urinary system and nephron (Bowman\'s capsule, glomerulus, PCT, Loop of Henle, DCT, collecting duct)',
-                            '2.72B Ultrafiltration at the glomerulus',
-                            '2.73B Selective reabsorption of glucose at proximal convoluted tubule',
-                            '2.74B Role of ADH in regulating water content of blood in collecting duct',
-                            '2.75B Urine composition: Water, urea, salts',
-                            '2.76 Nervous vs Hormonal control mechanisms',
-                            '2.77 Central Nervous System (CNS): Brain and spinal cord, impulse transmission via nerves',
-                            '2.78 Rapid response via reflex arcs (receptor, sensory neuron, relay neuron, motor neuron, effector)',
-                            '2.79 Synapses and neurotransmitter diffusion',
-                            '2.80 Human eye structure and function: Cornea, iris, pupil, lens, retina, optic nerve, fovea, ciliary muscles, suspensory ligaments',
-                            '2.81 Eye accommodation for near and distant objects',
-                            '2.82 Eye response to dim and bright light (pupil reflex)',
-                            '2.83 Skin structure and thermoregulation: Sweating, vasodilation, vasoconstriction, hair erection',
-                            '2.84 Source, role and effects of hormones: Adrenaline, Insulin, Testosterone, Oestrogen, Progesterone, ADH, FSH, LH'
+                            '2.10 Enzymes: Biological catalysts, active site, temperature & pH effects (denaturation)',
+                            '2.12 Practical: Investigate enzyme activity with changing temperature & pH',
+                            '2.15 Diffusion, Osmosis & Active Transport mechanisms and factors affecting rates',
+                            '2.17 Practical: Investigate diffusion and osmosis in non-living (visking tubing) & living (potato) systems',
+                            '2.18 Photosynthesis: Word & balanced chemical equations, limiting factors (light, CO2, temperature)',
+                            '2.21 Leaf structure adaptations: Waxy cuticle, palisade/spongy mesophyll, guard cells, stomata, xylem, phloem',
+                            '2.22 Plant mineral requirements: Nitrate (amino acids) & Magnesium (chlorophyll)',
+                            '2.23 Practical: Investigate photosynthesis requirements (light, CO2, chlorophyll) & oxygen evolution',
+                            '2.24 Human balanced diet components, functions & energy requirements',
+                            '2.27 Human alimentary canal structure, peristalsis, digestive enzymes (amylase, maltase, protease, lipase) & bile functions',
+                            '2.32 Small intestine villi adaptations for absorption',
+                            '2.33B Practical: Investigate energy content in food sample by calorimetry',
+                            '2.34 Respiration: ATP role, aerobic vs anaerobic respiration equations',
+                            '2.39 Practical: Investigate CO2 & heat evolution from respiring organisms',
+                            '2.40B Gas exchange in plants: Stomata movement & hydrogencarbonate indicator practical',
+                            '2.46 Human gas exchange: Thorax structure, ventilation mechanism, alveoli adaptations & smoking consequences',
+                            '2.51 Transport systems: Phloem (translocation) & Xylem (transpiration stream)',
+                            '2.57 Practical: Investigate transpiration rate using a potometer',
+                            '2.58 Blood components: Red blood cells, phagocytes, lymphocytes, platelets, plasma',
+                            '2.64 Human circulatory system: Heart structure, cardiac cycle, heart rate factors, CHD risk factors, blood vessels (arteries, veins, capillaries)',
+                            '2.69 Excretion: Carbon dioxide, sweat, urea',
+                            '2.70B Kidney structure, nephron function (ultrafiltration, selective reabsorption of glucose), ADH osmoregulation',
+                            '2.76 Nervous system: CNS, reflex arcs, synapses, neurotransmitters',
+                            '2.80 Human eye structure, accommodation & pupil reflex',
+                            '2.83 Skin thermoregulation & human endocrine system hormones'
                         ]
                     },
                     {
                         title: '3. Reproduction and Inheritance',
                         subtopics: [
-                            '3.1 Differences between sexual and asexual reproduction',
-                            '3.2 Gametes and fertilisation (zygote formation and mitosis)',
-                            '3.3 Flower structure and pollination (wind vs insect pollinated flowers)',
-                            '3.4 Seed and fruit formation, pollen tube growth',
-                            '3.5 Practical: Conditions required for seed germination (water, oxygen, warm temperature)',
-                            '3.6 Asexual reproduction in plants: Natural (runners) and Artificial (cuttings)',
-                            '3.7 Structure and function of male and female human reproductive systems',
-                            '3.8 Roles of oestrogen and progesterone in menstrual cycle and secondary sexual characteristics',
-                            '3.9B Roles of FSH and LH in menstrual cycle',
-                            '3.10 Role of placenta and amniotic fluid in embryo development',
-                            '3.11 Genome, gene, DNA structure (double helix, complementary base pairs A-T, C-G)',
-                            '3.12 RNA structure differences (ribose, uracil U instead of T, single stranded)',
-                            '3.13B Protein synthesis: Transcription (mRNA formation in nucleus) and Translation (tRNA and ribosomes in cytoplasm)',
-                            '3.14 Alleles, dominant, recessive, codominant, homozygous, heterozygous, genotype, phenotype',
-                            '3.15 Monohybrid cross genetic diagrams (Punnett squares, pedigree charts, ratios)',
-                            '3.16 Sex determination in humans (XX and XY chromosomes)',
-                            '3.17 Mitosis: Production of 2 genetically identical diploid cells for growth, repair, cloning',
-                            '3.18 Meiosis: Production of 4 genetically different haploid gametes',
-                            '3.19 Human diploid (46) and haploid (23) chromosome numbers',
-                            '3.20 Causes of genetic variation: Mutation, meiosis, random fertilisation',
-                            '3.21 Gene mutations and environmental mutagens (ionising radiation, chemicals)',
-                            '3.22 Darwin\'s theory of evolution by natural selection and antibiotic resistance in bacteria'
+                            '3.1 Sexual vs asexual reproduction & fertilisation',
+                            '3.3 Plant reproduction: Flower structure, wind vs insect pollination, seed/fruit formation & germination practical',
+                            '3.6 Artificial plant reproduction: Runners & cuttings',
+                            '3.7 Human reproductive systems & menstrual cycle hormones (FSH, LH, Oestrogen, Progesterone)',
+                            '3.10 Placenta & amniotic fluid roles',
+                            '3.11 Genome, DNA structure (double helix, A-T, C-G) & RNA differences',
+                            '3.13B Protein synthesis: Transcription (mRNA) & Translation (tRNA, amino acid chain)',
+                            '3.14 Alleles, dominant/recessive, homozygous/heterozygous, genotype/phenotype, Punnett squares',
+                            '3.16 Sex determination (XX / XY)',
+                            '3.17 Mitosis (2 identical diploid cells) vs Meiosis (4 unique haploid gametes)',
+                            '3.20 Genetic variation, mutations, mutagens & Darwin\'s natural selection'
                         ]
                     },
                     {
                         title: '4. Ecology and the Environment',
                         subtopics: [
-                            '4.1 Population, community, habitat, ecosystem definitions',
-                            '4.2 Practical: Investigate population size using quadrats',
-                            '4.3 Trophic levels: Producers, primary, secondary and tertiary consumers, decomposers',
-                            '4.4 Food chains, food webs, pyramids of numbers, biomass and energy transfer',
-                            '4.5 Energy transfer inefficiency along food chains (reasons for loss)',
-                            '4.6 Carbon cycle: Photosynthesis, respiration, decomposition, combustion',
-                            '4.7B Nitrogen cycle: Nitrogen fixing bacteria, nitrifying bacteria, denitrifying bacteria, decomposers',
-                             me: '4.8 Biological effects of air pollution: Sulfur dioxide (acid rain) and Carbon monoxide',
-                            '4.9 Greenhouse gases: Water vapour, CO2, nitrous oxide, methane, CFCs and Global Warming',
-                            '4.10 Biological consequences of water pollution by sewage (anoxia, pathogens)',
-                            '4.11 Eutrophication caused by leached synthetic fertilisers'
+                            '4.1 Population, community, habitat, ecosystem definitions & quadrat sampling practical',
+                            '4.3 Trophic levels, food chains, food webs, pyramids of number, biomass & energy transfer efficiency',
+                            '4.6 Carbon cycle & Nitrogen cycle',
+                            '4.8 Air pollution: Sulfur dioxide (acid rain) & Carbon monoxide',
+                            '4.9 Greenhouse gases & enhanced global warming',
+                            '4.10 Water pollution: Sewage pollution & Eutrophication from fertilisers'
                         ]
                     },
                     {
                         title: '5. Use of Biological Resources',
                         subtopics: [
-                            '5.1 Crop production in glasshouses and polythene tunnels (controlling temperature, light, CO2)',
-                            '5.2 Fertilisers (nitrates, phosphates, potassium) to increase crop yield',
-                            '5.3 Pest control: Chemical pesticides vs Biological control (advantages & disadvantages)',
-                            '5.4 Yeast in food production: Bread making and anaerobic respiration',
-                            '5.5 Practical: Investigate yeast respiration rates with different sugars/temperatures',
-                            '5.6 Role of Lactobacillus in yoghurt production',
-                            '5.7 Industrial fermenters: Conditions (aseptic, temperature, pH, oxygenation, agitation)',
-                            '5.8 Fish farming: Maintaining water quality, feeding, intraspecific/interspecific predation control, disease management, selective breeding',
-                            '5.9 Selective breeding in plants and animals',
-                            '5.10 Genetic modification using restriction enzymes and DNA ligase',
-                            '5.11 Recombinant DNA and vectors (plasmids, viruses)',
-                            '5.12 Production of human insulin using genetically modified bacteria',
-                            '5.13 GM crops for herbicide resistance and nutritional enhancement',
-                            '5.14B Micropropagation (tissue culture) in plants and explants',
-                            '5.15B Cloning in mammals: Dolly the sheep method (enucleated egg cell, diploid nucleus, surrogate mother)'
-                        ]
-                    }
-                ]
-            },
-            {
-                id: 'latin',
-                name: 'Latin',
-                examBoard: 'OCR (J282)',
-                topics: [
-                    {
-                        title: '1. Language (J282/01)',
-                        subtopics: [
-                            'Nouns: Declensions 1st, 2nd, 3rd (Cases: Nom, Voc, Acc, Gen, Dat, Abl)',
-                            'Adjectives: 2-1-2 and 3rd declension agreements and comparative/superlative forms',
-                            'Verbs: Active & Passive tenses (Present, Imperfect, Perfect, Pluperfect, Future)',
-                            'Subjunctive Mood: Imperfect and Pluperfect subjunctives in Cum clauses, Purpose, Result, Indirect Commands',
-                            'Irregular Verbs: sum, possum, eo, fero, volo, nolo, malo',
-                            'Syntax: Indirect Statement (Accusative + Infinitive)',
-                            'Syntax: Ablative Absolute, Participles (Present Active, Perfect Passive, Perfect Active Deponent)',
-                            'Pronouns: hic, ille, is, se, qui, quis, ipse',
-                            'Vocabulary List: Official OCR 450 word vocabulary list mastery'
-                        ]
-                    },
-                    {
-                        title: '2. Prose & Verse Literature (J282/02-05)',
-                        subtopics: [
-                            'Prose Prescribed Text: Precise translation of assigned set text passages',
-                            'Prose Textual Analysis: Style, tone, character portrayal and historical context',
-                            'Verse Prescribed Text: Precise translation of assigned verse text (e.g. Virgil Aeneid)',
-                            'Verse Metre & Devices: Scansion, hexameter, imagery, alliteration, chiasmus, assonance',
-                            'Literature Essay: Comparative analysis and thematic synthesis of prescribed texts'
-                        ]
-                    },
-                    {
-                        title: '3. Literature & Culture (J282/06)',
-                        subtopics: [
-                            'Roman Society: Domestic life, family, slaves, freedmen and patronage',
-                            'Entertainment: Amphitheatre (gladiators), Circus Maximus (chariot racing), Roman Baths',
-                            'Religion & Myths: Gods, temples, sacrifices, augury, state religion',
-                            'Military: Legionary army, structure, armor, camps, tactics'
-                        ]
-                    }
-                ]
-            },
-            {
-                id: 'maths',
-                name: 'Mathematics',
-                examBoard: 'Edexcel IGCSE Higher (4MA1)',
-                topics: [
-                    {
-                        title: '1. Number',
-                        subtopics: [
-                            'Fractions, Decimals, Recurring decimals to fractions conversion',
-                            'Indices: Laws of indices, negative and fractional indices',
-                            'Standard Form: Operations and real-world scientific problems',
-                            'Surds: Simplifying surds, expanding brackets, rationalising denominators',
-                            'Percentages: Reverse percentage, compound interest, depreciation',
-                            'Ratio & Proportion: Direct and inverse proportion equations ($y = kx$, $y = k/x$)',
-                            'Upper and Lower Bounds: Calculations with error intervals'
-                        ]
-                    },
-                    {
-                        title: '2. Algebra',
-                        subtopics: [
-                            'Expanding & Factorising: Quadratic expressions, difference of two squares, triple brackets',
-                            'Algebraic Fractions: Simplifying, arithmetic operations, solving equations',
-                            'Completing the Square: Expressing $a(x+p)^2 + q$ and finding turning points',
-                            'Simultaneous Equations: Linear and non-linear (quadratic/circle intersections)',
-                            'Inequalities: Linear, quadratic inequalities and graphical regions',
-                            'Functions: Domain, range, composite functions $fg(x)$, inverse functions $f^{-1}(x)$',
-                            'Calculus: Basic differentiation $\\frac{dy}{dx} = nax^{n-1}$, turning points and gradients of curves',
-                            'Sequences: nth term of arithmetic and quadratic sequences'
-                        ]
-                    },
-                    {
-                        title: '3. Geometry & Trigonometry',
-                        subtopics: [
-                            'Circle Theorems: Angles at centre, cyclic quadrilaterals, alternate segment theorem, tangents',
-                            'Trigonometry: Right-angled SOHCAHTOA, 3D Pythagoras and Trigonometry',
-                            'Sine & Cosine Rules: Non-right angled triangles, Ambiguous case of Sine rule',
-                            'Area of Triangle: $\\frac{1}{2}ab\\sin C$',
-                            'Vectors: Column vectors, geometric vector proofs, collinear points',
-                            'Similar Shapes: Length, Area ($k^2$) and Volume ($k^3$) scale factors',
-                            'Transformations: Translations, Reflections, Rotations, Enlargements with negative/fractional scale factors'
-                        ]
-                    },
-                    {
-                        title: '4. Statistics & Probability',
-                        subtopics: [
-                            'Cumulative Frequency: Graphs, median, interquartile range (IQR)',
-                            'Histograms: Frequency density calculation, unequal class intervals',
-                            'Probability: Tree diagrams, conditional probability $P(A|B)$, Venn diagrams & set notation ($\\cup, \\cap, \'$) '
-                        ]
-                    }
-                ]
-            },
-            {
-                id: 'admaths',
-                name: 'Additional Maths',
-                examBoard: 'OCR FSMQ (6993)',
-                topics: [
-                    {
-                        title: '1. Algebra & Enumeration',
-                        subtopics: [
-                            'Binomial Theorem: Expansion $(a+b)^n$ for positive integer $n$',
-                            'Polynomials: Factor theorem, Remainder theorem, solving cubic equations',
-                            'Algebraic Proof: Rigorous proof of algebraic identities and inequalities'
-                        ]
-                    },
-                    {
-                        title: '2. Co-ordinate Geometry',
-                        subtopics: [
-                            'Straight Lines: $y-y_1 = m(x-x_1)$, parallel/perpendicular lines ($m_1 m_2 = -1$)',
-                            'Circle Geometry: $(x-a)^2 + (y-b)^2 = r^2$, line-circle intersections, tangents'
-                        ]
-                    },
-                    {
-                        title: '3. Trigonometry',
-                        subtopics: [
-                            'Identities: $\\tan\\theta = \\frac{\\sin\\theta}{\\cos\\theta}$, $\\sin^2\\theta + \\cos^2\\theta = 1$',
-                            'Equations: Solving trig equations in given ranges (degrees & radians)'
-                        ]
-                    },
-                    {
-                        title: '4. Calculus & Kinematics',
-                        subtopics: [
-                            'Differentiation: First principles, tangents/normals, stationary points & nature',
-                            'Integration: Indefinite integrals, definite integrals, area under curves',
-                            'Kinematics: Displacement $s(t)$, velocity $v(t)$, acceleration $a(t)$ calculus applications'
-                        ]
-                    },
-                    {
-                        title: '5. Numerical Methods',
-                        subtopics: [
-                            'Trapezium Rule: Estimating area under curves',
-                            'Newton-Raphson & Interval Halving: Roots of non-linear equations'
-                        ]
-                    }
-                ]
-            },
-            {
-                id: 'french',
-                name: 'French',
-                examBoard: 'Edexcel GCSE (1FR0)',
-                topics: [
-                    {
-                        title: 'Theme 1: Identity and Culture',
-                        subtopics: [
-                            'Who am I?: Family relationships, friends, marriage, partnerships',
-                            'Daily life: Technology, social media, mobile phones',
-                            'Free-time activities: Music, cinema, TV, food, eating out, sport',
-                            'Customs & Festivals: French celebrations, traditions, food culture'
-                        ]
-                    },
-                    {
-                        title: 'Theme 2: Local, national, international areas',
-                        subtopics: [
-                            'Home, town, neighbourhood and region',
-                            'Social issues: Charity work, voluntary work, healthy vs unhealthy living',
-                            'Global issues: Environment, pollution, climate change, poverty',
-                            'Travel & Tourism: Holidays, transport, accommodation, weather'
-                        ]
-                    },
-                    {
-                        title: 'Theme 3: Current and future study and employment',
-                        subtopics: [
-                            'My studies: School subjects, opinions, timetable, school day',
-                            'Life at school: Rules, uniform, pressure, achievements',
-                            'Education post-16: University vs apprenticeship, future study plans',
-                            'Jobs & Career: Ambitions, employment, language benefits in work'
-                        ]
-                    },
-                    {
-                        title: 'Grammar & Linguistic Competence',
-                        subtopics: [
-                            'Tenses: Present, Perfect (Passé Composé - avoir/être), Imperfect, Future Proche, Future Simple, Conditional',
-                            'Subjunctive: Basic triggers (il faut que, bien que)',
-                            'Pronouns: Direct & indirect object pronouns (le/la/les, lui/leur), y/en',
-                            'Adjectives: Agreement, position, comparative, superlative',
-                            'Speaking & Writing Skills: Picture description, conversation fluency, 150-word essay writing'
-                        ]
-                    }
-                ]
-            },
-            {
-                id: 'geography',
-                name: 'Geography',
-                examBoard: 'AQA (8035)',
-                topics: [
-                    {
-                        title: 'Paper 1: Living with the Physical Environment',
-                        subtopics: [
-                            '3.1.1 The Challenge of Natural Hazards: Tectonic hazards (causes, effects, responses - LIC vs HIC case studies)',
-                            '3.1.1 Weather Hazards: Tropical storms (formation, typhoon Haiyan case study), UK extreme weather',
-                            '3.1.1 Climate Change: Evidence, natural/human causes, mitigation and adaptation strategies',
-                            '3.1.2 Physical Landscapes in the UK: Coastal landforms (erosion, deposition), coastal management (hard/soft engineering)',
-                            '3.1.2 River Landscapes: River landforms (waterfalls, meanders, oxbow lakes, levees), flood management',
-                            '3.1.3 The Living World: Ecosystems (producers, consumers), Tropical Rainforests (deforestation, Amazon case study)',
-                            '3.1.3 Hot Deserts / Cold Environments: Adaptations, opportunities, challenges, desertification'
-                        ]
-                    },
-                    {
-                        title: 'Paper 2: Challenges in the Human Environment',
-                        subtopics: [
-                            '3.2.1 Urban Issues & Challenges: Global urbanisation, Megacities, NEE urban growth case study (e.g. Rio/Lagos)',
-                            '3.2.1 UK Urban Changes: Sustainable urban living, regeneration case study (e.g. London / Bristol)',
-                            '3.2.2 The Changing Economic World: Development gap measures, Demographic Transition Model, NEE development case study (Nigeria/India)',
-                            '3.2.2 UK Economic Change: Post-industrial economy, North-South divide, infrastructure projects',
-                            '3.2.3 Resource Management: Global distribution of Food, Water, Energy; UK resource management options'
-                        ]
-                    },
-                    {
-                        title: 'Paper 3: Geographical Applications',
-                        subtopics: [
-                            'Issue Evaluation: Critical analysis of pre-released booklet decision-making exercise',
-                            'Physical Fieldwork Inquiry: Primary data collection methods, sampling, presentation, analysis, evaluation',
-                            'Human Fieldwork Inquiry: Primary data collection methods, statistical representation, conclusions',
-                            'Geographical & Cartographic Skills: Ordnance Survey maps, grid references, relief, scale, graphs'
-                        ]
-                    }
-                ]
-            },
-            {
-                id: 'english',
-                name: 'English (Lang & Lit)',
-                examBoard: 'Edexcel IGCSE (4EA1 / 4ET1)',
-                topics: [
-                    {
-                        title: 'Language Paper 1: Non-fiction & Transactional Writing',
-                        subtopics: [
-                            'Non-Fiction Anthology: Analysis of language, structure and tone in prescribed texts',
-                            'Unseen Non-Fiction: Critical comprehension and textual comparison techniques',
-                            'Transactional Writing: Writing articles, speeches, letters, guides with audience/purpose adaptation'
-                        ]
-                    },
-                    {
-                        title: 'Language Paper 2: Poetry & Imaginative Writing',
-                        subtopics: [
-                            'Poetry Anthology: Linguistic, structural and thematic analysis of poetry collection',
-                            'Creative/Imaginative Writing: Narrative techniques, descriptive imagery, characterization, pacing'
-                        ]
-                    },
-                    {
-                        title: 'Literature Paper 1: Poetry & Modern Drama',
-                        subtopics: [
-                            'Anthology Poetry Comparison: Comparative essay structure, thematic connections, poetic devices',
-                            'Unseen Poetry: Unseen poem analysis, tone, rhythm, imagery',
-                            'Modern Drama: An Inspector Calls / A View from the Bridge - themes, character analysis, context'
-                        ]
-                    },
-                    {
-                        title: 'Literature Paper 2: Literary Heritage & Prose',
-                        subtopics: [
-                            'Shakespeare Play: Macbeth / Romeo and Juliet - key extracts, character arcs, dramatic irony, Jacobean context',
-                            'Prose Text: Of Mice and Men / To Kill a Mockingbird / Fahrenheit 451 - theme synthesis and textual evidence'
+                            '5.1 Crop yield enhancement: Glasshouses, polythene tunnels, fertilisers, chemical pesticides vs biological control',
+                            '5.4 Yeast in bread making & Lactobacillus in yoghurt production',
+                            '5.7 Industrial fermenters design & environmental control',
+                            '5.8 Fish farming methods & selective breeding',
+                            '5.10 Genetic modification using restriction enzymes, DNA ligase, plasmids/vectors & human insulin production',
+                            '5.14B Micropropagation (tissue culture) & mammalian cloning (Dolly the sheep method)'
                         ]
                     }
                 ]
@@ -543,54 +269,53 @@
                     {
                         title: '1. Principles of Chemistry',
                         subtopics: [
-                            'States of matter: Particle theory, diffusion, changes of state',
-                            'Elements, Compounds, Mixtures: Separating techniques (filtration, crystallisation, distillation, chromatography)',
-                            'Atomic structure: Protons, neutrons, electrons, atomic number, mass number, isotopes, relative atomic mass ($A_r$)',
-                            'Periodic Table: Groups, periods, electronic configurations, metal vs non-metal properties',
-                            'Chemical formulae, equations, balancing equations, empirical and molecular formulae calculation',
-                            'Moles, molar mass, reacting masses, percentage yield, molar volume of gas ($24 dm^3$)',
-                            'Ionic bonding: Dot-and-cross diagrams, giant ionic lattices, properties (melting point, conductivity)',
-                            'Covalent bonding: Simple molecular vs giant covalent structures (diamond, graphite, $C_{60}$ fullerene)',
-                            'Metallic bonding: Lattice of positive ions in sea of delocalised electrons, malleability, conductivity',
-                            'Electrolysis: Molten and aqueous solutions, ionic half-equations at anode and cathode'
+                            'States of matter, particle theory, changes of state & diffusion',
+                            'Separating mixtures: Filtration, crystallisation, simple/fractional distillation, paper chromatography & Rf values',
+                            'Atomic structure: Protons, neutrons, electrons, atomic number, mass number, isotopes & Ar calculation',
+                            'Periodic Table: Groups, periods, electron configurations, metal vs non-metal properties',
+                            'Chemical formulae, balanced equations, ionic equations & state symbols',
+                            'Moles, molar mass, reacting masses, percentage yield & molar gas volume ($24 dm^3$)',
+                            'Ionic bonding: Dot-and-cross diagrams, ionic lattices, high melting points & electrical conductivity',
+                            'Covalent bonding: Simple molecular vs giant covalent structures (diamond, graphite, C60 fullerene)',
+                            'Metallic bonding: Positive ions lattice in delocalised electrons, malleability & conductivity',
+                            'Electrolysis: Molten and aqueous electrolytes, ionic half-equations at anode and cathode'
                         ]
                     },
                     {
                         title: '2. Inorganic Chemistry',
                         subtopics: [
-                            'Group 1 (Alkali Metals): Physical properties, reactivity trends with water and air',
-                            'Group 7 (Halogens): Trends in color, state, reactivity, displacement reactions',
-                            'Gases in the atmosphere: Composition, determining oxygen percentage, global warming',
-                            'Reactivity series: Displacement reactions, rusting of iron and rust prevention (galvanising, sacrificial protection)',
-                            'Extraction of metals: Reduction with carbon, phytoextraction, bioleaching',
-                            'Acids, alkalis, indicators (litmus, phenolphthalein, methyl orange, universal indicator), pH scale',
-                            'Acid reactions: Reacting with metals, metal oxides, hydroxides and carbonates to form salts',
-                            'Solubility rules and preparing soluble/insoluble salts (precipitation, titration methods)',
-                            'Chemical tests: Anions (halides, sulfates, carbonates), Cations (flame tests, $NaOH$ tests), Gases ($O_2, H_2, CO_2, NH_3, Cl_2$)'
+                            'Group 1 Alkali Metals: Physical properties, reaction trends with water and oxygen',
+                            'Group 7 Halogens: Color, physical state trends, reactivity displacement reactions',
+                            'Atmospheric gases: Composition, determining % oxygen in air, global warming',
+                            'Reactivity series: Displacement reactions, rusting of iron & rust prevention methods',
+                            'Extraction of metals: Carbon reduction, phytoextraction, bioleaching',
+                            'Acids, alkalis, indicators (litmus, phenolphthalein, methyl orange) & pH scale',
+                            'Acid reactions: Reacting with metals, metal oxides, hydroxides and carbonates',
+                            'Salt preparation methods: Titration, insoluble base method & precipitation',
+                            'Chemical tests: Anions (halides, sulfates, carbonates), Cations (flame tests, NaOH precipitates) & Gases'
                         ]
                     },
                     {
                         title: '3. Physical Chemistry',
                         subtopics: [
-                            'Energetics: Exothermic vs endothermic reactions, enthalpy change ($\Delta H$), calorimetry calculations ($Q=mc\Delta T$)',
-                            'Bond energies: Calculating $\Delta H$ from bond breaking and bond making values',
-                            'Rates of reaction: Collision theory, surface area, concentration, pressure, temperature effects',
-                            'Catalysts: Lowering activation energy ($E_a$) by providing an alternative pathway',
-                            'Practical: Measuring rate of reaction (gas volume, precipitation, mass loss)',
+                            'Energetics: Exothermic vs endothermic reactions, enthalpy change ($\Delta H$) & calorimetry calculations ($Q=mc\Delta T$)',
+                            'Bond energies: Calculating enthalpy change from bond breaking and making values',
+                            'Rates of reaction: Collision theory, surface area, concentration, pressure, temperature & catalysts',
+                            'Practical: Measuring reaction rates via gas volume, mass loss or precipitation',
                             'Reversible reactions & Dynamic Equilibrium: Le Chatelier\'s principle (effects of pressure and temperature)'
                         ]
                     },
                     {
                         title: '4. Organic Chemistry',
                         subtopics: [
-                            'Introduction: Homologous series, functional groups, isomerism, IUPAC nomenclature',
-                            'Crude oil: Fractional distillation, fractions and their uses, catalytic cracking',
-                            'Alkanes: General formula $C_n H_{2n+2}$, complete and incomplete combustion, substitution with halogens',
-                            'Alkenes: General formula $C_n H_{2n}$, double bond addition reactions, test for unsaturation (bromine water)',
-                            'Alcohols: Ethanol production (fermentation vs hydration of ethene), oxidation to carboxylic acids',
-                            'Carboxylic acids: Reactions with metals and carbonates, functional group $-COOH$',
-                            'Esters: Preparation from alcohol + carboxylic acid, ethyl ethanoate synthesis, distinctive smells',
-                            'Synthetic polymers: Addition polymerisation (monomers, repeating units), condensation polymerisation (polyesters)'
+                            'Homologous series, functional groups, isomerism & IUPAC naming',
+                            'Crude oil fractional distillation, petroleum fractions & catalytic cracking',
+                            'Alkanes: General formula $C_n H_{2n+2}$, complete/incomplete combustion, halogen substitution',
+                            'Alkenes: General formula $C_n H_{2n}$, double bond addition reactions & bromine water test',
+                            'Alcohols: Ethanol production (fermentation vs ethene hydration) & oxidation to carboxylic acids',
+                            'Carboxylic acids: Reactions with metals and carbonates, functional group -COOH',
+                            'Esters: Preparation from alcohol + carboxylic acid, ethyl ethanoate synthesis',
+                            'Polymers: Addition polymerisation & Condensation polymerisation (polyesters)'
                         ]
                     }
                 ]
@@ -603,77 +328,172 @@
                     {
                         title: '1. Forces and Motion',
                         subtopics: [
-                            'Movement & Position: Distance-time and Velocity-time graphs, acceleration $a = (v-u)/t$, $v^2 = u^2 + 2as$',
-                            'Forces: Balanced/unbalanced forces, $F=ma$, stopping distance (thinking + braking distance)',
-                            'Terminal velocity: Falling objects, air resistance, weight $W=mg$',
-                            'Hooke\'s Law: Elastic deformation, plastic deformation, elastic limit, force-extension graphs',
-                            'Momentum: $p=mv$, conservation of momentum, safety features ($F = \Delta p / \Delta t$)',
-                            'Moments: Principle of moments, center of gravity, torque'
+                            'Movement & Position: Distance-time and Velocity-time graphs, $a = (v-u)/t$, $v^2 = u^2 + 2as$',
+                            'Forces: Resultant forces, $F=ma$, stopping distance (thinking + braking distance factors)',
+                            'Terminal velocity: Weight $W=mg$, air resistance & falling objects',
+                            'Hooke\'s Law: Elastic vs plastic deformation, elastic limit, force-extension graphs',
+                            'Momentum: $p=mv$, conservation of momentum, impact safety features ($F = \Delta p / t$)',
+                            'Moments: Principle of moments, center of gravity & torque balance'
                         ]
                     },
                     {
                         title: '2. Electricity',
                         subtopics: [
-                            'Mains electricity: Insulation, double insulation, earthing, fuses, circuit breakers, AC vs DC',
+                            'Mains electricity: Fuses, circuit breakers, insulation, double insulation, earthing, AC vs DC',
                             'Power & Energy: $P = IV$, $E = IVt$, $E = Pt$',
-                            'Current & Resistance: Series and parallel circuits, I-V graphs for resistor, filament lamp, diode',
-                            'LDRs and Thermistors: Resistance variation with light and temperature',
+                            'Circuits: Current & voltage in series vs parallel, I-V graphs (resistor, filament lamp, diode)',
+                            'Components: LDRs and Thermistors variable resistance',
                             'Voltage & Charge: $Q = It$, $V = E/Q$'
                         ]
                     },
                     {
                         title: '3. Waves',
                         subtopics: [
-                            'Properties of waves: Longitudinal vs Transverse, Amplitude, Wavelength, Frequency, Wave speed equation $v = f \lambda$',
-                            'Electromagnetic spectrum: Radio, Microwave, IR, Visible, UV, X-ray, Gamma; uses and hazards',
-                            'Light reflection & refraction: Snell\'s Law $n = \sin i / \sin r$, refractive index, total internal reflection, critical angle $\sin c = 1/n$',
-                            'Sound waves: Oscilloscope pitch (frequency) and loudness (amplitude), audible human range ($20-20,000 Hz$)'
+                            'Wave properties: Longitudinal vs Transverse, Amplitude, Wavelength, Frequency, $v = f \lambda$',
+                            'Electromagnetic spectrum: Radio, Microwave, IR, Visible, UV, X-ray, Gamma uses and hazards',
+                            'Reflection & Refraction: Snell\'s Law $n = \sin i / \sin r$, total internal reflection & critical angle $\sin c = 1/n$',
+                            'Sound waves: Oscilloscope traces, pitch, amplitude & human hearing range ($20-20,000 Hz$)'
                         ]
                     },
                     {
                         title: '4. Energy Resources and Energy Transfers',
                         subtopics: [
-                            'Energy transfers: Thermal, light, sound, electrical, kinetic, GPE, chemical, nuclear',
-                            'Efficiency equation: $\text{Efficiency} = (\text{Useful output} / \text{Total input}) \times 100\%$',
-                            'Thermal conduction, convection, radiation and insulation methods',
-                            'Work, Power and Energy: $W = Fd$, $GPE = mgh$, $KE = \frac{1}{2}mv^2$, $\text{Power} = W/t$',
-                            'Energy resources: Renewable vs Non-renewable electricity generation methods'
+                            'Energy transfers, efficiency equation $\text{Efficiency} = (\text{Useful output} / \text{Total input}) \times 100\%$',
+                            'Conduction, convection, radiation & thermal insulation methods',
+                            'Work & Power: $W = Fd$, $GPE = mgh$, $KE = \frac{1}{2}mv^2$, $\text{Power} = W/t$',
+                            'Renewable vs Non-renewable energy resources for electricity generation'
                         ]
                     },
                     {
                         title: '5. Solids, Liquids and Gases',
                         subtopics: [
-                            'Density & Pressure: Density $\rho = m/V$, Pressure $p = F/A$, Fluid pressure $p = h \rho g$',
+                            'Density & Pressure: $\rho = m/V$, $p = F/A$, fluid pressure $p = h \rho g$',
                             'Changes of state: Heating curves, Specific Heat Capacity $Q = mc\Delta T$',
-                            'Ideal Gas molecules: Absolute zero ($-273^\circ C = 0 K$), Kelvin temperature scale, $p_1 V_1 = p_2 V_2$, $p_1/T_1 = p_2/T_2$'
+                            'Gas laws: Absolute zero ($0 K = -273^\circ C$), Kelvin scale, $p_1 V_1 = p_2 V_2$, $p_1/T_1 = p_2/T_2$'
                         ]
                     },
                     {
                         title: '6. Magnetism and Electromagnetism',
                         subtopics: [
-                            'Magnetism: Magnetic fields, field lines, induced magnetism',
-                            'Electromagnetism: Field around a straight wire and solenoid, Fleming\'s Left Hand Rule, DC Electric Motor',
-                            'Electromagnetic Induction: Generators, Transformers, Transformer equations $V_p/V_s = N_p/N_s$, $V_p I_p = V_s I_s$'
+                            'Magnetic fields, field lines & induced magnetism',
+                            'Electromagnetism: Field around wire/solenoid, Fleming\'s Left Hand Rule, DC Motor',
+                            'Electromagnetic Induction: Generators, Transformers, $V_p/V_s = N_p/N_s$, $V_p I_p = V_s I_s$'
                         ]
                     },
                     {
                         title: '7. Radioactivity and Particles',
                         subtopics: [
-                            'Radioactivity: Alpha, Beta, Gamma radiation properties, penetration, ionising power',
-                            'Nuclear equations: Balancing mass and atomic numbers in radioactive decay',
-                            'Half-life: Definition, decay curves, background radiation',
-                            'Uses & Dangers: Medical tracers, radiotherapy, radiometric dating, radiation damage',
-                            'Nuclear Fission: Uranium-235 splitting, chain reactions, control rods and moderators in nuclear reactors',
-                            'Nuclear Fusion: Fusion in stars, conditions required (extreme temperature & pressure)'
+                            'Alpha, Beta, Gamma radiation properties, ionising power & penetration depth',
+                            'Nuclear decay equations: Mass and atomic number balancing',
+                            'Half-life definition, decay curves & background radiation sources',
+                            'Uses & Dangers: Medical tracers, radiotherapy, radiometric dating, cell mutation',
+                            'Nuclear Fission: Uranium-235 splitting, chain reactions, control rods & moderators',
+                            'Nuclear Fusion: Conditions required for star fusion'
                         ]
                     },
                     {
                         title: '8. Astrophysics',
                         subtopics: [
-                            'Motion in space: Orbital speed $v = 2\pi r / T$, gravitational field strength variations, planetary orbits',
-                            'Stellar evolution: Nebula, Main sequence star, Red giant / Red supergiant, White dwarf, Neutron star, Black hole',
-                            'Hertzsprung-Russell (H-R) diagram: Luminosity vs Temperature classification',
-                            'Cosmology: Redshift of distant galaxies, Big Bang theory evidence (Redshift and CMBR)'
+                            'Orbital motion: Speed $v = 2\pi r / T$, gravitational field strength differences',
+                            'Stellar evolution: Nebula, Main sequence, Red giant/supergiant, White dwarf, Neutron star, Black hole',
+                            'Hertzsprung-Russell (H-R) diagram: Luminosity vs Classifying temperature',
+                            'Cosmology: Redshift evidence & Cosmic Microwave Background Radiation (CMBR)'
+                        ]
+                    }
+                ]
+            },
+            {
+                id: 'maths',
+                name: 'Mathematics',
+                examBoard: 'Edexcel IGCSE Higher (4MA1)',
+                topics: [
+                    {
+                        title: '1. Number',
+                        subtopics: [
+                            'Fractions, Decimals & Converting recurring decimals to fractions',
+                            'Laws of indices, negative and fractional indices',
+                            'Standard Form calculations & real-world problems',
+                            'Surds simplification, expanding brackets & rationalising denominators',
+                            'Percentages: Reverse percentage, compound interest & depreciation',
+                            'Ratio & Proportion: Direct ($y = kx$) & Inverse ($y = k/x$) proportion',
+                            'Upper and Lower Bounds calculations & error intervals'
+                        ]
+                    },
+                    {
+                        title: '2. Algebra',
+                        subtopics: [
+                            'Expanding & Factorising: Linear, quadratic, difference of two squares & triple brackets',
+                            'Algebraic Fractions: Simplifying, arithmetic operations & solving equations',
+                            'Completing the square $a(x+p)^2 + q$ & finding turning points',
+                            'Simultaneous equations: Linear & non-linear quadratic/circle intersections',
+                            'Inequalities: Linear, quadratic inequalities & graphical shaded regions',
+                            'Functions: Domain, range, composite $fg(x)$ & inverse $f^{-1}(x)$',
+                            'Calculus: Basic differentiation $\\frac{dy}{dx} = nax^{n-1}$ & stationary turning points',
+                            'Sequences: nth term of arithmetic & quadratic sequences'
+                        ]
+                    },
+                    {
+                        title: '3. Geometry & Trigonometry',
+                        subtopics: [
+                            'Circle Theorems: Angle at centre, cyclic quadrilaterals, alternate segment theorem, tangents',
+                            'Trigonometry: Right-angled SOHCAHTOA, 3D Pythagoras & 3D Trigonometry',
+                            'Sine & Cosine Rules: Non-right angled triangles & Ambiguous case of Sine rule',
+                            'Area of Triangle: $\\frac{1}{2}ab\\sin C$',
+                            'Vectors: Column vectors, geometric vector proofs & collinear points',
+                            'Similar Shapes: Length, Area ($k^2$) and Volume ($k^3$) scale factors',
+                            'Transformations: Translations, Reflections, Rotations & Enlargements with negative/fractional scale factors'
+                        ]
+                    },
+                    {
+                        title: '4. Statistics & Probability',
+                        subtopics: [
+                            'Cumulative Frequency graphs, median & interquartile range (IQR)',
+                            'Histograms: Frequency density calculation with unequal class intervals',
+                            'Probability tree diagrams, conditional probability $P(A|B)$ & Venn diagrams set notation'
+                        ]
+                    }
+                ]
+            },
+            {
+                id: 'admaths',
+                name: 'Additional Maths',
+                examBoard: 'OCR FSMQ (6993)',
+                topics: [
+                    {
+                        title: '1. Algebra & Enumeration',
+                        subtopics: [
+                            'Binomial Expansion $(a+b)^n$ for positive integer $n$',
+                            'Polynomials: Factor theorem, Remainder theorem & solving cubic equations',
+                            'Algebraic Proof of identities and inequalities'
+                        ]
+                    },
+                    {
+                        title: '2. Co-ordinate Geometry',
+                        subtopics: [
+                            'Straight lines: $y-y_1 = m(x-x_1)$, parallel/perpendicular gradient rules ($m_1 m_2 = -1$)',
+                            'Circle equations $(x-a)^2 + (y-b)^2 = r^2$, line-circle intersections & tangents'
+                        ]
+                    },
+                    {
+                        title: '3. Trigonometry',
+                        subtopics: [
+                            'Identities: $\\tan\\theta = \\frac{\\sin\\theta}{\\cos\\theta}$, $\\sin^2\\theta + \\cos^2\\theta = 1$',
+                            'Trigonometric equations in degrees and radians'
+                        ]
+                    },
+                    {
+                        title: '4. Calculus & Kinematics',
+                        subtopics: [
+                            'Differentiation: First principles, tangents/normals, stationary points & nature',
+                            'Integration: Indefinite integrals, definite integrals & area under curves',
+                            'Kinematics: Displacement $s(t)$, velocity $v(t)$, acceleration $a(t)$ calculus applications'
+                        ]
+                    },
+                    {
+                        title: '5. Numerical Methods',
+                        subtopics: [
+                            'Trapezium Rule for estimating area under curves',
+                            'Newton-Raphson & Interval Halving root finding methods'
                         ]
                     }
                 ]
@@ -686,75 +506,74 @@
                     {
                         title: '3.1 Fundamentals of Algorithms',
                         subtopics: [
-                            'Representing algorithms: Flowcharts, Pseudocode, Trace tables',
-                            'Efficiency: Time and space complexity concept',
-                            'Searching algorithms: Linear search vs Binary search (trace & compare)',
-                            'Sorting algorithms: Bubble sort, Merge sort (trace & compare)'
+                            'Algorithm representation: Flowcharts, Pseudocode & Trace tables',
+                            'Efficiency: Time & space complexity principles',
+                            'Searching algorithms: Linear search vs Binary search tracing',
+                            'Sorting algorithms: Bubble sort vs Merge sort tracing'
                         ]
                     },
                     {
                         title: '3.2 Programming Concepts',
                         subtopics: [
-                            'Variables, Constants, Assignment, Data Types (Integer, Real, Boolean, Character, String)',
-                            'Sequence, Selection (IF-ELSE, SWITCH-CASE), Iteration (FOR, WHILE)',
-                            'Arithmetic, Relational ($=, \neq, <, >, \le, \ge$) and Logical operators (AND, OR, NOT)',
-                            'String handling techniques: Length, substring, concatenation, character conversion',
+                            'Variables, Constants, Assignment & Primitive Data Types',
+                            'Control structures: Sequence, Selection (IF/SWITCH), Iteration (FOR/WHILE)',
+                            'Arithmetic, Relational & Logical (AND, OR, NOT) operators',
+                            'String manipulation: Length, substring, concatenation, char conversion',
                             'Data structures: 1D and 2D Arrays',
-                            'Subroutines: Procedures and Functions, parameters, arguments, local vs global scope',
-                            'File handling: Open, read, write, close text files',
-                            'Testing: Syntax errors, logic errors, boundary/normal/erroneous test data'
+                            'Subroutines: Procedures, Functions, parameters, return values, local vs global scope',
+                            'Text file handling: Open, read, write, close',
+                            'Testing strategies: Syntax vs logic errors; boundary, normal & erroneous test data'
                         ]
                     },
                     {
                         title: '3.3 Data Representation',
                         subtopics: [
                             'Number systems: Binary, Hexadecimal, Denary conversions',
-                            'Binary arithmetic: Binary addition, overflow errors, binary shifts (left/right multiplication/division)',
-                            'Character encoding: ASCII (7/8 bit) vs Unicode',
-                            'Representing images: Bitmap images, pixels, color depth, resolution, metadata',
-                            'Representing sound: Analogue to digital, sample rate, bit depth, file size equation',
-                            'Data compression: Lossy vs Lossless compression methods (Run Length Encoding)'
+                            'Binary arithmetic: Addition, overflow errors & binary shifts',
+                            'Character sets: ASCII vs Unicode',
+                            'Bitmap images: Pixels, color depth, resolution & metadata',
+                            'Digital sound: Sampling rate, bit depth & file size equation',
+                            'Data compression: Lossy vs Lossless (Run Length Encoding)'
                         ]
                     },
                     {
                         title: '3.4 Computer Systems',
                         subtopics: [
-                            'Hardware & Software: Systems software vs Application software',
+                            'Hardware & Systems software vs Application software',
                             'CPU Architecture: Fetch-Decode-Execute cycle, ALU, Control Unit, Registers (PC, MAR, MDR, Accumulator)',
-                            'CPU Performance factors: Clock speed, Cache size, Processor cores',
-                            'Memory: RAM vs ROM, Virtual Memory',
-                            'Secondary Storage: Optical, Magnetic, Solid State storage characteristics',
+                            'CPU Performance: Clock speed, Cache size, Cores',
+                            'Memory: RAM vs ROM & Virtual Memory',
+                            'Secondary storage: Optical, Magnetic & Solid State technologies',
                             'Boolean logic: Truth tables for AND, OR, NOT, XOR, NAND, NOR logic gates'
                         ]
                     },
                     {
                         title: '3.5 Cyber Security & Networks',
                         subtopics: [
-                            'Network topologies: Star and Bus topologies, LAN vs WAN',
-                            'Network hardware: Routers, switches, NICs, transmission media (copper, fiber optic, wireless)',
-                            'Protocols & Layers: TCP/IP, HTTP, HTTPS, FTP, POP3, IMAP, SMTP; concept of layered protocols',
-                            'Cyber Security Threats: Social engineering (phishing, shoulder surfing), Malware (viruses, trojans, ransomware), SQL injection, Brute force',
-                            'Defense mechanisms: Firewalls, Encryption, Penetration testing, Anti-malware, Strong passwords'
+                            'Networks: Star vs Bus topologies, LAN vs WAN',
+                            'Hardware: Routers, switches, NICs & transmission media',
+                            'Protocols & Layers: TCP/IP, HTTP, HTTPS, FTP, POP3, IMAP, SMTP; 4-layer TCP/IP model',
+                            'Cyber security threats: Phishing, Malware, SQL Injection, Brute Force',
+                            'Defense mechanisms: Firewalls, Encryption, Anti-malware & Penetration testing'
                         ]
                     },
                     {
                         title: '3.6 Ethical, Legal & Environmental Impacts',
                         subtopics: [
-                            'Ethical considerations: AI, privacy issues, automation, digital divide',
-                            'Legal framework: Data Protection Act 2018 / GDPR, Computer Misuse Act 1990, Copyright Designs and Patents Act 1988',
-                            'Environmental impact: E-waste, energy consumption of datacenters'
+                            'Ethical issues: AI, privacy, automation & digital divide',
+                            'Legal frameworks: Data Protection Act 2018 / GDPR, Computer Misuse Act 1990, Copyright Act 1988',
+                            'Environmental impact: E-waste & datacenter energy consumption'
                         ]
                     }
                 ]
             }
         ];
 
-        // State Management stored in LocalStorage
         let appData = {};
         let activeRAGFilter = 'ALL';
 
         function initApp() {
-            const saved = localStorage.getItem('abingdon_gcse_tracker_v2');
+            const saved = localStorage.getItem('abingdon_gcse_tracker_v3');
             if (saved) {
                 try {
                     appData = JSON.parse(saved);
@@ -763,7 +582,6 @@
                 }
             }
 
-            // Populate Subject Selector dropdown
             const filterSelect = document.getElementById('subjectFilter');
             SPEC_DATA.forEach(sub => {
                 const opt = document.createElement('option');
@@ -777,7 +595,7 @@
         }
 
         function saveState() {
-            localStorage.setItem('abingdon_gcse_tracker_v2', JSON.stringify(appData));
+            localStorage.setItem('abingdon_gcse_tracker_v3', JSON.stringify(appData));
             calculateOverallStats();
         }
 
@@ -877,7 +695,6 @@
             SPEC_DATA.forEach(subj => {
                 if (selectedSubj !== 'ALL' && subj.id !== selectedSubj) return;
 
-                // Calculate Subject Level Progress
                 let subjTotal = 0, subjGreen = 0;
                 subj.topics.forEach((t, tIdx) => {
                     t.subtopics.forEach((_, sIdx) => {
@@ -900,7 +717,6 @@
                         const key = getItemKey(subj.id, tIdx, sIdx);
                         const item = getItemData(key);
 
-                        // Filters
                         if (activeRAGFilter === 'GREEN' && item.status !== 'GREEN') return;
                         if (activeRAGFilter === 'AMBER' && item.status !== 'AMBER') return;
                         if (activeRAGFilter === 'RED' && item.status !== 'RED') return;
@@ -933,7 +749,6 @@
                                     </div>
                                 </div>
                                 
-                                <!-- RAG Buttons -->
                                 <div class="flex items-center gap-1 self-end md:self-center" onclick="event.stopPropagation()">
                                     <button onclick="setRAG(event, '${key}', 'RED')" class="px-2.5 py-1 rounded text-xs font-semibold border ${isRed ? 'btn-red-active' : 'bg-white text-rose-700 border-rose-300 hover:bg-rose-50'}">Red</button>
                                     <button onclick="setRAG(event, '${key}', 'AMBER')" class="px-2.5 py-1 rounded text-xs font-semibold border ${isAmber ? 'btn-amber-active' : 'bg-white text-amber-700 border-amber-300 hover:bg-amber-50'}">Amber</button>
@@ -990,9 +805,7 @@
 
         function toggleAccordion(id) {
             const el = document.getElementById(id);
-            if (el) {
-                el.classList.toggle('hidden');
-            }
+            if (el) el.classList.toggle('hidden');
         }
 
         function toggleAllAccordions(open) {
@@ -1026,21 +839,20 @@
                     renderApp();
                     alert('Revision data successfully imported!');
                 } catch(err) {
-                    alert('Invalid JSON backup file.');
+                    alert('Invalid JSON file.');
                 }
             };
             reader.readAsText(file);
         }
 
         function resetData() {
-            if (confirm('Are you sure you want to reset all RAG statuses, stars, and notes?')) {
+            if (confirm('Are you sure you want to reset all RAG ratings, stars, and notes?')) {
                 appData = {};
                 saveState();
                 renderApp();
             }
         }
 
-        // Initialize App on load
         window.addEventListener('DOMContentLoaded', initApp);
     </script>
 </body>
