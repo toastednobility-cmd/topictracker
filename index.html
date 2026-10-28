@@ -39,13 +39,17 @@
 
             <!-- Global Action Controls -->
             <div class="flex flex-wrap items-center gap-2 text-sm">
+                <!-- Random Revision Generator Button -->
+                <button onclick="pickRandomTopic()" class="bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white px-3 py-1.5 rounded font-medium shadow-sm flex items-center gap-1.5">
+                    🎲 Pick Topic for Me
+                </button>
                 <!-- Dark Mode Toggle Button -->
                 <button onclick="toggleDarkMode()" id="darkModeBtn" class="bg-slate-800 hover:bg-slate-700 dark:bg-slate-800 dark:hover:bg-slate-700 px-3 py-1.5 rounded border border-slate-700 text-amber-400 dark:text-amber-300 font-medium flex items-center gap-1.5 transition">
                     <span id="darkIcon">🌙</span> <span id="darkText">Dark</span>
                 </button>
                 <button onclick="toggleAllAccordions(true)" class="bg-slate-800 hover:bg-slate-700 px-3 py-1.5 rounded border border-slate-700 text-slate-200">Expand All</button>
                 <button onclick="toggleAllAccordions(false)" class="bg-slate-800 hover:bg-slate-700 px-3 py-1.5 rounded border border-slate-700 text-slate-200">Collapse All</button>
-                <button onclick="exportData()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-3 py-1.5 rounded font-medium shadow-sm">Export Data</button>
+                <button onclick="exportData()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-3 py-1.5 rounded font-medium shadow-sm">Export</button>
                 <label class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-3 py-1.5 rounded border border-slate-700 cursor-pointer">
                     Import
                     <input type="file" id="importFile" onchange="importData(event)" class="hidden" accept=".json">
@@ -94,14 +98,14 @@
                 </select>
             </div>
 
-            <!-- Filter Buttons -->
+            <!-- Multi-Select Filter Buttons -->
             <div class="flex items-center gap-1.5 w-full md:w-auto justify-start md:justify-end flex-wrap text-xs">
-                <span class="text-slate-500 dark:text-slate-400 font-medium mr-1">Filter:</span>
-                <button onclick="setRAGFilter('ALL')" id="filter-ALL" class="px-2.5 py-1.5 rounded font-medium border bg-slate-800 text-white border-slate-800">All</button>
-                <button onclick="setRAGFilter('GREEN')" id="filter-GREEN" class="px-2.5 py-1.5 rounded font-medium border bg-white dark:bg-slate-800 text-emerald-700 dark:text-emerald-400 border-slate-300 dark:border-slate-700 hover:bg-emerald-50 dark:hover:bg-slate-700">Green</button>
-                <button onclick="setRAGFilter('AMBER')" id="filter-AMBER" class="px-2.5 py-1.5 rounded font-medium border bg-white dark:bg-slate-800 text-amber-700 dark:text-amber-400 border-slate-300 dark:border-slate-700 hover:bg-amber-50 dark:hover:bg-slate-700">Amber</button>
-                <button onclick="setRAGFilter('RED')" id="filter-RED" class="px-2.5 py-1.5 rounded font-medium border bg-white dark:bg-slate-800 text-rose-700 dark:text-rose-400 border-slate-300 dark:border-slate-700 hover:bg-rose-50 dark:hover:bg-slate-700">Red</button>
-                <button onclick="setRAGFilter('STARRED')" id="filter-STARRED" class="px-2.5 py-1.5 rounded font-medium border bg-white dark:bg-slate-800 text-amber-600 dark:text-amber-300 border-slate-300 dark:border-slate-700 hover:bg-amber-50 dark:hover:bg-slate-700">★ Starred</button>
+                <span class="text-slate-500 dark:text-slate-400 font-medium mr-1">Filters:</span>
+                <button onclick="toggleMultiFilter('GREEN')" id="filter-GREEN" class="px-2.5 py-1.5 rounded font-medium border bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-700">Green</button>
+                <button onclick="toggleMultiFilter('AMBER')" id="filter-AMBER" class="px-2.5 py-1.5 rounded font-medium border bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-700">Amber</button>
+                <button onclick="toggleMultiFilter('RED')" id="filter-RED" class="px-2.5 py-1.5 rounded font-medium border bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-700">Red</button>
+                <button onclick="toggleMultiFilter('NONE')" id="filter-NONE" class="px-2.5 py-1.5 rounded font-medium border bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-700">Unrated</button>
+                <button onclick="toggleMultiFilter('STARRED')" id="filter-STARRED" class="px-2.5 py-1.5 rounded font-medium border bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-700">★ Starred</button>
             </div>
         </div>
 
@@ -109,6 +113,23 @@
         <div id="subjectsContainer" class="space-y-6"></div>
 
     </main>
+
+    <!-- Random Topic Modal -->
+    <div id="topicModal" class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl max-w-md w-full p-6 shadow-2xl text-center space-y-4">
+            <div class="inline-flex p-3 bg-indigo-100 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 rounded-full text-2xl">
+                🎯
+            </div>
+            <h3 class="text-lg font-bold text-slate-900 dark:text-white">Your Revision Focus</h3>
+            <div id="modalSubject" class="text-xs font-semibold uppercase tracking-wider text-indigo-500"></div>
+            <p id="modalTopicTitle" class="text-sm font-bold text-slate-700 dark:text-slate-300"></p>
+            <div id="modalSubtopic" class="p-3 bg-slate-50 dark:bg-slate-800 rounded-xl text-sm font-medium text-slate-900 dark:text-white border border-slate-200 dark:border-slate-700"></div>
+            <div class="flex gap-3 pt-2">
+                <button onclick="pickRandomTopic()" class="flex-1 bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 py-2 rounded-lg text-sm font-semibold transition">Pick Another</button>
+                <button onclick="closeModal()" class="flex-1 bg-indigo-600 hover:bg-indigo-500 text-white py-2 rounded-lg text-sm font-semibold transition">Got it!</button>
+            </div>
+        </div>
+    </div>
 
     <!-- JavaScript Data and Application Logic -->
     <script>
@@ -579,7 +600,7 @@
         ];
 
         let appData = {};
-        let activeRAGFilter = 'ALL';
+        let activeFilters = new Set(); // Multi-select filter set
 
         function initDarkMode() {
             const savedTheme = localStorage.getItem('theme');
@@ -606,7 +627,7 @@
         function initApp() {
             initDarkMode();
 
-            const saved = localStorage.getItem('abingdon_gcse_tracker_v3');
+            const saved = localStorage.getItem('abingdon_gcse_tracker_v4');
             if (saved) {
                 try {
                     appData = JSON.parse(saved);
@@ -628,7 +649,7 @@
         }
 
         function saveState() {
-            localStorage.setItem('abingdon_gcse_tracker_v3', JSON.stringify(appData));
+            localStorage.setItem('abingdon_gcse_tracker_v4', JSON.stringify(appData));
             calculateOverallStats();
             updateSubjectBars();
         }
@@ -641,7 +662,6 @@
             return appData[key] || { status: 'NONE', starred: false, notes: '' };
         }
 
-        // Targeted DOM mutations so menu state is NOT reset when rating or editing
         function toggleStar(event, key) {
             event.stopPropagation();
             const curr = getItemData(key);
@@ -649,7 +669,6 @@
             if (!appData[key]) appData[key] = { status: 'NONE', starred: false, notes: '' };
             appData[key].starred = newStarred;
             
-            // Direct DOM update
             const starBtn = document.getElementById(`star_${key}`);
             if (starBtn) starBtn.textContent = newStarred ? '★' : '☆';
             
@@ -663,7 +682,6 @@
             if (!appData[key]) appData[key] = { status: 'NONE', starred: false, notes: '' };
             appData[key].status = newStatus;
 
-            // Direct DOM update of active buttons
             ['RED', 'AMBER', 'GREEN'].forEach(st => {
                 const btn = document.getElementById(`btn_${st}_${key}`);
                 if (btn) {
@@ -689,16 +707,15 @@
             saveState();
         }
 
-        function setRAGFilter(filter) {
-            activeRAGFilter = filter;
-            ['ALL', 'GREEN', 'AMBER', 'RED', 'STARRED'].forEach(f => {
-                const btn = document.getElementById(`filter-${f}`);
-                if (f === filter) {
-                    btn.className = "px-2.5 py-1.5 rounded font-medium border bg-slate-800 text-white border-slate-800 dark:bg-slate-100 dark:text-slate-900";
-                } else {
-                    btn.className = "px-2.5 py-1.5 rounded font-medium border bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700";
-                }
-            });
+        function toggleMultiFilter(filter) {
+            const btn = document.getElementById(`filter-${filter}`);
+            if (activeFilters.has(filter)) {
+                activeFilters.delete(filter);
+                btn.className = "px-2.5 py-1.5 rounded font-medium border bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-700";
+            } else {
+                activeFilters.add(filter);
+                btn.className = "px-2.5 py-1.5 rounded font-medium border bg-indigo-600 text-white border-indigo-600";
+            }
             renderApp();
         }
 
@@ -757,7 +774,6 @@
         function renderApp() {
             const container = document.getElementById('subjectsContainer');
             
-            // Remember existing expanded accordions
             const expandedIds = new Set();
             document.querySelectorAll('.accordion-content:not(.hidden)').forEach(el => expandedIds.add(el.id));
 
@@ -791,10 +807,16 @@
                         const key = getItemKey(subj.id, tIdx, sIdx);
                         const item = getItemData(key);
 
-                        if (activeRAGFilter === 'GREEN' && item.status !== 'GREEN') return;
-                        if (activeRAGFilter === 'AMBER' && item.status !== 'AMBER') return;
-                        if (activeRAGFilter === 'RED' && item.status !== 'RED') return;
-                        if (activeRAGFilter === 'STARRED' && !item.starred) return;
+                        // Multi-filter evaluation (matches if no filters active OR matches any active category condition)
+                        if (activeFilters.size > 0) {
+                            let matchesAny = false;
+                            if (activeFilters.has('GREEN') && item.status === 'GREEN') matchesAny = true;
+                            if (activeFilters.has('AMBER') && item.status === 'AMBER') matchesAny = true;
+                            if (activeFilters.has('RED') && item.status === 'RED') matchesAny = true;
+                            if (activeFilters.has('NONE') && item.status === 'NONE') matchesAny = true;
+                            if (activeFilters.has('STARRED') && item.starred) matchesAny = true;
+                            if (!matchesAny) return;
+                        }
 
                         if (searchVal && !sub.toLowerCase().includes(searchVal) && !topic.title.toLowerCase().includes(searchVal) && !(item.notes && item.notes.toLowerCase().includes(searchVal))) {
                             return;
@@ -834,7 +856,7 @@
 
                     if (matchingSubtopicsCount > 0) {
                         const accordionId = `acc_${subj.id}_${tIdx}`;
-                        const isOpen = expandedIds.has(accordionId);
+                        const isOpen = expandedIds.has(accordionId) || activeFilters.size > 0 || searchVal.length > 0;
                         topicsHTML += `
                             <div class="border-b border-slate-200 dark:border-slate-800 last:border-0">
                                 <button onclick="toggleAccordion('${accordionId}')" class="w-full text-left px-5 py-3.5 bg-slate-100/70 dark:bg-slate-800/40 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center justify-between font-medium text-slate-800 dark:text-slate-200 transition">
@@ -876,6 +898,42 @@
                     </div>
                 `;
             }
+        }
+
+        function pickRandomTopic() {
+            // Collect unmastered subtopics (Red, Amber, or Unrated)
+            let candidates = [];
+            SPEC_DATA.forEach(subj => {
+                subj.topics.forEach((topic, tIdx) => {
+                    topic.subtopics.forEach((sub, sIdx) => {
+                        const key = getItemKey(subj.id, tIdx, sIdx);
+                        const status = getItemData(key).status;
+                        if (status !== 'GREEN') {
+                            candidates.push({
+                                subject: `${subj.name} (${subj.examBoard})`,
+                                topicTitle: topic.title,
+                                subtopic: sub
+                            });
+                        }
+                    });
+                });
+            });
+
+            if (candidates.length === 0) {
+                alert('Amazing job! You have mastered all subtopics. Reset or switch filters to pick more.');
+                return;
+            }
+
+            const randomItem = candidates[Math.floor(Math.random() * candidates.length)];
+            
+            document.getElementById('modalSubject').textContent = randomItem.subject;
+            document.getElementById('modalTopicTitle').textContent = randomItem.topicTitle;
+            document.getElementById('modalSubtopic').textContent = randomItem.subtopic;
+            document.getElementById('topicModal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('topicModal').classList.add('hidden');
         }
 
         function toggleAccordion(id) {
