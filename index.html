@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Abingdon GCSE Revision Tracker</title>
+    <title>Abingdon GCSE Revision Tracker & Timetable</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -32,23 +32,31 @@
             <div class="flex items-center gap-3">
                 <div class="bg-indigo-600 p-2 rounded-lg font-bold text-xl">AS</div>
                 <div>
-                    <h1 class="text-xl font-bold tracking-tight">Abingdon School GCSE Revision Tracker</h1>
-                    <p class="text-xs text-slate-400">7 Core Subjects Specification Checklist</p>
+                    <h1 class="text-xl font-bold tracking-tight">Abingdon School GCSE Revision App</h1>
+                    <p class="text-xs text-slate-400">Dynamic Multi-Week Timetable & Spec Tracker</p>
                 </div>
+            </div>
+
+            <!-- Tab Switcher Navigation -->
+            <div class="flex bg-slate-800 p-1 rounded-lg border border-slate-700">
+                <button onclick="switchTab('tracker')" id="tabBtnTracker" class="px-4 py-1.5 rounded-md text-sm font-semibold bg-indigo-600 text-white shadow transition">
+                    📋 Specification Tracker
+                </button>
+                <button onclick="switchTab('timetable')" id="tabBtnTimetable" class="px-4 py-1.5 rounded-md text-sm font-semibold text-slate-300 hover:text-white transition">
+                    📅 Multi-Week Timetable
+                </button>
             </div>
 
             <!-- Global Action Controls -->
             <div class="flex flex-wrap items-center gap-2 text-sm">
                 <!-- Random Revision Generator Button -->
                 <button onclick="pickRandomTopic()" class="bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white px-3 py-1.5 rounded font-medium shadow-sm flex items-center gap-1.5">
-                    🎲 Pick Topic for Me
+                    🎲 Pick Topic
                 </button>
                 <!-- Dark Mode Toggle Button -->
                 <button onclick="toggleDarkMode()" id="darkModeBtn" class="bg-slate-800 hover:bg-slate-700 dark:bg-slate-800 dark:hover:bg-slate-700 px-3 py-1.5 rounded border border-slate-700 text-amber-400 dark:text-amber-300 font-medium flex items-center gap-1.5 transition">
                     <span id="darkIcon">🌙</span> <span id="darkText">Dark</span>
                 </button>
-                <button onclick="toggleAllAccordions(true)" class="bg-slate-800 hover:bg-slate-700 px-3 py-1.5 rounded border border-slate-700 text-slate-200">Expand All</button>
-                <button onclick="toggleAllAccordions(false)" class="bg-slate-800 hover:bg-slate-700 px-3 py-1.5 rounded border border-slate-700 text-slate-200">Collapse All</button>
                 <button onclick="exportData()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-3 py-1.5 rounded font-medium shadow-sm">Export</button>
                 <label class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-3 py-1.5 rounded border border-slate-700 cursor-pointer">
                     Import
@@ -62,66 +70,98 @@
     <!-- Main Content Area -->
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
 
-        <!-- Progress Overview Dashboard -->
-        <div class="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 p-5 mb-6 transition-colors">
-            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-4">
-                <div>
-                    <h2 class="text-lg font-semibold text-slate-900 dark:text-white">Overall Revision Progress</h2>
-                    <p class="text-sm text-slate-500 dark:text-slate-400" id="overall-stats-text">0 / 0 subtopics mastered</p>
+        <!-- ==================== TAB 1: TRACKER VIEW ==================== -->
+        <div id="viewTracker" class="space-y-6">
+            <!-- Progress Overview Dashboard -->
+            <div class="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 p-5 transition-colors">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-4">
+                    <div>
+                        <h2 class="text-lg font-semibold text-slate-900 dark:text-white">Overall Revision Progress</h2>
+                        <p class="text-sm text-slate-500 dark:text-slate-400" id="overall-stats-text">0 / 0 subtopics mastered</p>
+                    </div>
+                    <div class="flex gap-4 text-xs font-semibold flex-wrap">
+                        <span class="px-2.5 py-1 rounded bg-emerald-100 dark:bg-emerald-950 dark:text-emerald-300 text-emerald-800 border border-emerald-300 dark:border-emerald-800" id="stat-green">Green: 0 (0%)</span>
+                        <span class="px-2.5 py-1 rounded bg-amber-100 dark:bg-amber-950 dark:text-amber-300 text-amber-800 border border-amber-300 dark:border-amber-800" id="stat-amber">Amber: 0 (0%)</span>
+                        <span class="px-2.5 py-1 rounded bg-rose-100 dark:bg-rose-950 dark:text-rose-300 text-rose-800 border border-rose-300 dark:border-rose-800" id="stat-red">Red: 0 (0%)</span>
+                        <span class="px-2.5 py-1 rounded bg-slate-100 dark:bg-slate-800 dark:text-slate-300 text-slate-700 border border-slate-300 dark:border-slate-700" id="stat-unrated">Unrated: 0 (100%)</span>
+                    </div>
                 </div>
-                <div class="flex gap-4 text-xs font-semibold flex-wrap">
-                    <span class="px-2.5 py-1 rounded bg-emerald-100 dark:bg-emerald-950 dark:text-emerald-300 text-emerald-800 border border-emerald-300 dark:border-emerald-800" id="stat-green">Green: 0 (0%)</span>
-                    <span class="px-2.5 py-1 rounded bg-amber-100 dark:bg-amber-950 dark:text-amber-300 text-amber-800 border border-amber-300 dark:border-amber-800" id="stat-amber">Amber: 0 (0%)</span>
-                    <span class="px-2.5 py-1 rounded bg-rose-100 dark:bg-rose-950 dark:text-rose-300 text-rose-800 border border-rose-300 dark:border-rose-800" id="stat-red">Red: 0 (0%)</span>
-                    <span class="px-2.5 py-1 rounded bg-slate-100 dark:bg-slate-800 dark:text-slate-300 text-slate-700 border border-slate-300 dark:border-slate-700" id="stat-unrated">Unrated: 0 (100%)</span>
+                <!-- Progress Bar -->
+                <div class="w-full h-4 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden flex shadow-inner">
+                    <div id="bar-green" class="bg-emerald-500 h-full transition-all duration-300" style="width: 0%"></div>
+                    <div id="bar-amber" class="bg-amber-400 h-full transition-all duration-300" style="width: 0%"></div>
+                    <div id="bar-red" class="bg-rose-500 h-full transition-all duration-300" style="width: 0%"></div>
                 </div>
             </div>
-            <!-- Progress Bar -->
-            <div class="w-full h-4 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden flex shadow-inner">
-                <div id="bar-green" class="bg-emerald-500 h-full transition-all duration-300" style="width: 0%"></div>
-                <div id="bar-amber" class="bg-amber-400 h-full transition-all duration-300" style="width: 0%"></div>
-                <div id="bar-red" class="bg-rose-500 h-full transition-all duration-300" style="width: 0%"></div>
+
+            <!-- Filter & Search Controls -->
+            <div class="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 p-4 flex flex-col gap-4 transition-colors">
+                <div class="flex flex-col md:flex-row gap-4 items-center justify-between">
+                    <!-- Search -->
+                    <div class="w-full md:w-1/3">
+                        <input type="text" id="searchInput" oninput="applyFilters()" placeholder="Search topics, key terms or notes..." class="w-full px-3 py-2 border border-slate-300 dark:border-slate-700 dark:bg-slate-800 dark:text-white rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    </div>
+
+                    <!-- Subject Select Dropdown -->
+                    <div class="w-full md:w-1/4">
+                        <select id="subjectFilter" onchange="applyFilters()" class="w-full px-3 py-2 border border-slate-300 dark:border-slate-700 dark:bg-slate-800 dark:text-white rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white">
+                            <option value="ALL">All 7 Subjects</option>
+                        </select>
+                    </div>
+
+                    <!-- Preset Filter Sets -->
+                    <div class="flex items-center gap-1.5 w-full md:w-auto justify-start md:justify-end flex-wrap text-xs">
+                        <span class="text-slate-500 dark:text-slate-400 font-medium mr-1">Sets:</span>
+                        <button onclick="applyPresetSet(['RED', 'AMBER'])" class="px-2.5 py-1 rounded bg-rose-50 dark:bg-rose-950/50 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-800 hover:bg-rose-100 font-medium">🔴 Needs Attention</button>
+                        <button onclick="applyPresetSet(['RED', 'STARRED'])" class="px-2.5 py-1 rounded bg-amber-50 dark:bg-amber-950/50 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800 hover:bg-amber-100 font-medium">⭐ Starred & Red</button>
+                        <button onclick="applyPresetSet(['RED', 'AMBER', 'NONE'])" class="px-2.5 py-1 rounded bg-indigo-50 dark:bg-indigo-950/50 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800 hover:bg-indigo-100 font-medium">⏳ Unmastered</button>
+                        <button onclick="clearAllFilters()" class="px-2.5 py-1 rounded bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-200 font-medium">Clear</button>
+                    </div>
+                </div>
+
+                <!-- Individual Multi-Select Toggles -->
+                <div class="flex items-center justify-between gap-1.5 flex-wrap text-xs pt-2 border-t border-slate-100 dark:border-slate-800">
+                    <div class="flex items-center gap-1.5 flex-wrap">
+                        <span class="text-slate-500 dark:text-slate-400 font-medium mr-1">Custom Toggles:</span>
+                        <button onclick="toggleMultiFilter('GREEN')" id="filter-GREEN" class="px-2.5 py-1 rounded font-medium border bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-700">Green</button>
+                        <button onclick="toggleMultiFilter('AMBER')" id="filter-AMBER" class="px-2.5 py-1 rounded font-medium border bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-700">Amber</button>
+                        <button onclick="toggleMultiFilter('RED')" id="filter-RED" class="px-2.5 py-1 rounded font-medium border bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-700">Red</button>
+                        <button onclick="toggleMultiFilter('NONE')" id="filter-NONE" class="px-2.5 py-1 rounded font-medium border bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-700">Unrated</button>
+                        <button onclick="toggleMultiFilter('STARRED')" id="filter-STARRED" class="px-2.5 py-1 rounded font-medium border bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-700">★ Starred</button>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <button onclick="toggleAllAccordions(true)" class="text-indigo-600 dark:text-indigo-400 hover:underline">Expand All</button>
+                        <span>•</span>
+                        <button onclick="toggleAllAccordions(false)" class="text-indigo-600 dark:text-indigo-400 hover:underline">Collapse All</button>
+                    </div>
+                </div>
             </div>
+
+            <!-- Subjects Container -->
+            <div id="subjectsContainer" class="space-y-6"></div>
         </div>
 
-        <!-- Filter & Search Controls -->
-        <div class="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 p-4 mb-6 flex flex-col gap-4 transition-colors">
-            <div class="flex flex-col md:flex-row gap-4 items-center justify-between">
-                <!-- Search -->
-                <div class="w-full md:w-1/3">
-                    <input type="text" id="searchInput" oninput="applyFilters()" placeholder="Search topics, key terms or notes..." class="w-full px-3 py-2 border border-slate-300 dark:border-slate-700 dark:bg-slate-800 dark:text-white rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+        <!-- ==================== TAB 2: TIMETABLE VIEW ==================== -->
+        <div id="viewTimetable" class="hidden space-y-6">
+            <div class="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 p-6 space-y-6">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                    <div>
+                        <h2 class="text-xl font-bold text-slate-900 dark:text-white">Multi-Week Revision Plan (Starting Next Monday up to Dec 11)</h2>
+                        <p class="text-sm text-slate-500 dark:text-slate-400">
+                            <strong>Mon / Wed / Fri:</strong> Amber topics • <strong>Tue / Thu:</strong> Red topics • <strong>Sat / Sun:</strong> Open study slots
+                        </p>
+                    </div>
+                    <button onclick="renderTimetable()" class="px-3 py-1.5 bg-indigo-600 text-white text-xs font-semibold rounded-lg hover:bg-indigo-500 shadow">
+                        🔄 Refresh Schedule
+                    </button>
                 </div>
 
-                <!-- Subject Select Dropdown -->
-                <div class="w-full md:w-1/4">
-                    <select id="subjectFilter" onchange="applyFilters()" class="w-full px-3 py-2 border border-slate-300 dark:border-slate-700 dark:bg-slate-800 dark:text-white rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white">
-                        <option value="ALL">All 7 Subjects</option>
-                    </select>
+                <!-- Multi-Week Container -->
+                <div id="weeksContainer" class="space-y-8">
+                    <!-- Dynamic Weeks Injected Here -->
                 </div>
-
-                <!-- Preset Filter Sets -->
-                <div class="flex items-center gap-1.5 w-full md:w-auto justify-start md:justify-end flex-wrap text-xs">
-                    <span class="text-slate-500 dark:text-slate-400 font-medium mr-1">Sets:</span>
-                    <button onclick="applyPresetSet(['RED', 'AMBER'])" class="px-2.5 py-1 rounded bg-rose-50 dark:bg-rose-950/50 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-800 hover:bg-rose-100 font-medium">🔴 Needs Attention</button>
-                    <button onclick="applyPresetSet(['RED', 'STARRED'])" class="px-2.5 py-1 rounded bg-amber-50 dark:bg-amber-950/50 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800 hover:bg-amber-100 font-medium">⭐ Starred & Red</button>
-                    <button onclick="applyPresetSet(['RED', 'AMBER', 'NONE'])" class="px-2.5 py-1 rounded bg-indigo-50 dark:bg-indigo-950/50 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800 hover:bg-indigo-100 font-medium">⏳ Unmastered</button>
-                    <button onclick="clearAllFilters()" class="px-2.5 py-1 rounded bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-200 font-medium">Clear</button>
-                </div>
-            </div>
-
-            <!-- Individual Multi-Select Toggles -->
-            <div class="flex items-center gap-1.5 flex-wrap text-xs pt-2 border-t border-slate-100 dark:border-slate-800">
-                <span class="text-slate-500 dark:text-slate-400 font-medium mr-1">Custom Toggles:</span>
-                <button onclick="toggleMultiFilter('GREEN')" id="filter-GREEN" class="px-2.5 py-1 rounded font-medium border bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-700">Green</button>
-                <button onclick="toggleMultiFilter('AMBER')" id="filter-AMBER" class="px-2.5 py-1 rounded font-medium border bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-700">Amber</button>
-                <button onclick="toggleMultiFilter('RED')" id="filter-RED" class="px-2.5 py-1 rounded font-medium border bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-700">Red</button>
-                <button onclick="toggleMultiFilter('NONE')" id="filter-NONE" class="px-2.5 py-1 rounded font-medium border bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-700">Unrated</button>
-                <button onclick="toggleMultiFilter('STARRED')" id="filter-STARRED" class="px-2.5 py-1 rounded font-medium border bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-700">★ Starred</button>
             </div>
         </div>
-
-        <!-- Subjects Container -->
-        <div id="subjectsContainer" class="space-y-6"></div>
 
     </main>
 
@@ -611,7 +651,37 @@
         ];
 
         let appData = {};
-        let activeFilters = new Set(); // Multi-select filter set
+        let activeFilters = new Set();
+
+        const WEEKLY_TEMPLATE = [
+            { day: 'Monday', ragType: 'AMBER', slots: ['5:30 - 6:15 PM', '8:15 - 9:00 PM'] },
+            { day: 'Tuesday', ragType: 'RED', slots: ['5:30 - 6:15 PM', '8:15 - 9:00 PM'] },
+            { day: 'Wednesday', ragType: 'AMBER', slots: ['5:30 - 6:15 PM', '8:15 - 9:00 PM'] },
+            { day: 'Thursday', ragType: 'RED', slots: ['5:30 - 6:15 PM', '8:15 - 9:00 PM'] },
+            { day: 'Friday', ragType: 'AMBER', slots: ['6:30 - 7:15 PM'] },
+            { day: 'Saturday', ragType: 'OPEN', slots: ['11:00 AM - 1:00 PM', '3:00 - 5:00 PM'] },
+            { day: 'Sunday', ragType: 'OPEN', slots: ['11:00 AM - 1:30 PM'] }
+        ];
+
+        function switchTab(tab) {
+            const tracker = document.getElementById('viewTracker');
+            const timetable = document.getElementById('viewTimetable');
+            const btnTracker = document.getElementById('tabBtnTracker');
+            const btnTimetable = document.getElementById('tabBtnTimetable');
+
+            if (tab === 'tracker') {
+                tracker.classList.remove('hidden');
+                timetable.classList.add('hidden');
+                btnTracker.className = "px-4 py-1.5 rounded-md text-sm font-semibold bg-indigo-600 text-white shadow transition";
+                btnTimetable.className = "px-4 py-1.5 rounded-md text-sm font-semibold text-slate-300 hover:text-white transition";
+            } else {
+                tracker.classList.add('hidden');
+                timetable.classList.remove('hidden');
+                btnTracker.className = "px-4 py-1.5 rounded-md text-sm font-semibold text-slate-300 hover:text-white transition";
+                btnTimetable.className = "px-4 py-1.5 rounded-md text-sm font-semibold bg-indigo-600 text-white shadow transition";
+                renderTimetable();
+            }
+        }
 
         function initDarkMode() {
             const savedTheme = localStorage.getItem('theme');
@@ -638,7 +708,7 @@
         function initApp() {
             initDarkMode();
 
-            const saved = localStorage.getItem('abingdon_gcse_tracker_v4');
+            const saved = localStorage.getItem('abingdon_gcse_tracker_v9');
             if (saved) {
                 try {
                     appData = JSON.parse(saved);
@@ -660,7 +730,7 @@
         }
 
         function saveState() {
-            localStorage.setItem('abingdon_gcse_tracker_v4', JSON.stringify(appData));
+            localStorage.setItem('abingdon_gcse_tracker_v9', JSON.stringify(appData));
             calculateOverallStats();
             updateSubjectBars();
         }
@@ -687,7 +757,7 @@
         }
 
         function setRAG(event, key, status) {
-            event.stopPropagation();
+            if (event && event.stopPropagation) event.stopPropagation();
             const curr = getItemData(key);
             const newStatus = curr.status === status ? 'NONE' : status;
             if (!appData[key]) appData[key] = { status: 'NONE', starred: false, notes: '' };
@@ -708,6 +778,10 @@
             });
 
             saveState();
+            renderApp();
+            if (!document.getElementById('viewTimetable').classList.contains('hidden')) {
+                renderTimetable();
+            }
         }
 
         function updateNotes(event, key) {
@@ -805,6 +879,247 @@
                 if (barEl) barEl.style.width = `${subjPct}%`;
                 if (textEl) textEl.textContent = `${subjPct}%`;
             });
+        }
+
+        // Interleaved Round-Robin Subject Pool Generator
+        function getTopicsByRAG(targetRAG) {
+            let subjectGroups = {};
+            SPEC_DATA.forEach(subj => {
+                subjectGroups[subj.id] = [];
+                subj.topics.forEach((topic, tIdx) => {
+                    topic.subtopics.forEach((sub, sIdx) => {
+                        const key = getItemKey(subj.id, tIdx, sIdx);
+                        if (getItemData(key).status === targetRAG) {
+                            subjectGroups[subj.id].push({
+                                key: key,
+                                subjectId: subj.id,
+                                subjectName: subj.name,
+                                topicTitle: topic.title,
+                                subtopic: sub
+                            });
+                        }
+                    });
+                });
+            });
+
+            let interleaved = [];
+            let subjectKeys = SPEC_DATA.map(s => s.id);
+            let maxLen = Math.max(...Object.values(subjectGroups).map(g => g.length), 0);
+
+            for (let i = 0; i < maxLen; i++) {
+                for (let sId of subjectKeys) {
+                    if (subjectGroups[sId] && subjectGroups[sId][i]) {
+                        interleaved.push(subjectGroups[sId][i]);
+                    }
+                }
+            }
+
+            return interleaved;
+        }
+
+        function getDiverseNextTopic(pool, usedKeys, lastSubjectId) {
+            if (pool.length === 0) return null;
+            let candidate = pool.find(item => !usedKeys.has(item.key) && item.subjectId !== lastSubjectId);
+            if (!candidate) {
+                candidate = pool.find(item => !usedKeys.has(item.key));
+            }
+            if (!candidate) {
+                candidate = pool.find(item => item.subjectId !== lastSubjectId) || pool[0];
+            }
+            return candidate;
+        }
+
+        function renderTimetable() {
+            const container = document.getElementById('weeksContainer');
+            container.innerHTML = '';
+
+            const redPool = getTopicsByRAG('RED');
+            const amberPool = getTopicsByRAG('AMBER');
+
+            let assignedRedKeys = new Set();
+            let assignedAmberKeys = new Set();
+
+            // Calculate starting from NEXT Monday
+            let today = new Date();
+            let currWeekStart = new Date(today);
+            let dayOfWeek = currWeekStart.getDay();
+            // Days until next Monday (if today is Monday, get next Monday)
+            let daysUntilNextMon = (1 + 7 - dayOfWeek) % 7;
+            if (daysUntilNextMon === 0) daysUntilNextMon = 7;
+            currWeekStart.setDate(currWeekStart.getDate() + daysUntilNextMon);
+
+            let endDate = new Date('2026-12-11');
+            if (currWeekStart > endDate) {
+                endDate = new Date(currWeekStart.getTime() + 42 * 24 * 60 * 60 * 1000);
+            }
+
+            let weekCounter = 1;
+            let lastRedSubject = null;
+            let lastAmberSubject = null;
+
+            while (currWeekStart <= endDate && weekCounter <= 12) {
+                let weekEnd = new Date(currWeekStart);
+                weekEnd.setDate(weekEnd.getDate() + 6);
+
+                const weekSection = document.createElement('div');
+                weekSection.className = "border border-slate-200 dark:border-slate-800 rounded-2xl p-4 bg-slate-50/50 dark:bg-slate-900/50 space-y-4";
+                
+                let weekHeaderHTML = `
+                    <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-2">
+                        <h3 class="font-bold text-base text-slate-900 dark:text-white">Week ${weekCounter} <span class="text-xs font-normal text-slate-500">(${currWeekStart.toLocaleDateString()} - ${weekEnd.toLocaleDateString()})</span></h3>
+                    </div>
+                `;
+
+                let daysGridHTML = '<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-7 gap-3">';
+
+                WEEKLY_TEMPLATE.forEach((dayConfig, dIdx) => {
+                    // Compute exact date for this specific day in the current week
+                    let dayDate = new Date(currWeekStart);
+                    dayDate.setDate(dayDate.getDate() + dIdx);
+
+                    // Check if dayDate matches today's date (ignoring time)
+                    let isToday = dayDate.toDateString() === new Date().toDateString();
+
+                    let headerBadge = '';
+                    if (dayConfig.ragType === 'RED') headerBadge = '<span class="px-2 py-0.5 text-[10px] bg-rose-100 text-rose-800 dark:bg-rose-950 dark:text-rose-300 rounded font-bold">RED Focus</span>';
+                    else if (dayConfig.ragType === 'AMBER') headerBadge = '<span class="px-2 py-0.5 text-[10px] bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300 rounded font-bold">AMBER Focus</span>';
+                    else headerBadge = '<span class="px-2 py-0.5 text-[10px] bg-indigo-100 text-indigo-800 dark:bg-indigo-950 dark:text-indigo-300 rounded font-bold">Free Study</span>';
+
+                    let slotsHTML = '';
+
+                    dayConfig.slots.forEach(timeLabel => {
+                        let assignedTopic = null;
+
+                        if (dayConfig.ragType === 'RED') {
+                            assignedTopic = getDiverseNextTopic(redPool, assignedRedKeys, lastRedSubject);
+                            if (assignedTopic) {
+                                assignedRedKeys.add(assignedTopic.key);
+                                lastRedSubject = assignedTopic.subjectId;
+                            }
+                        } else if (dayConfig.ragType === 'AMBER') {
+                            assignedTopic = getDiverseNextTopic(amberPool, assignedAmberKeys, lastAmberSubject);
+                            if (assignedTopic) {
+                                assignedAmberKeys.add(assignedTopic.key);
+                                lastAmberSubject = assignedTopic.subjectId;
+                            }
+                        }
+
+                        if (assignedTopic) {
+                            const currentStatus = getItemData(assignedTopic.key).status;
+                            slotsHTML += `
+                                <div class="p-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg space-y-1.5 shadow-sm">
+                                    <div class="flex items-center justify-between text-[11px] font-semibold text-indigo-600 dark:text-indigo-400">
+                                        <span>⏰ ${timeLabel}</span>
+                                        <span class="text-slate-400 font-normal">${assignedTopic.subjectName}</span>
+                                    </div>
+                                    <p class="text-xs font-semibold text-slate-800 dark:text-slate-200 leading-tight">${assignedTopic.subtopic}</p>
+                                    <div class="flex items-center justify-between pt-1 text-[10px]">
+                                        <label class="text-[10px] text-slate-500 font-medium">Status:</label>
+                                        <select onchange="setRAGFromTimetable('${assignedTopic.key}', this.value)" class="text-[11px] px-1.5 py-0.5 rounded border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-semibold focus:outline-none">
+                                            <option value="RED" ${currentStatus === 'RED' ? 'selected' : ''}>🔴 Red</option>
+                                            <option value="AMBER" ${currentStatus === 'AMBER' ? 'selected' : ''}>🟡 Amber</option>
+                                            <option value="GREEN" ${currentStatus === 'GREEN' ? 'selected' : ''}>🟢 Green</option>
+                                            <option value="NONE" ${currentStatus === 'NONE' ? 'selected' : ''}>⚪ Unrated</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            `;
+                        } else {
+                            slotsHTML += `
+                                <div class="p-2.5 bg-white/60 dark:bg-slate-900/40 border border-dashed border-slate-300 dark:border-slate-700 rounded-lg space-y-1">
+                                    <div class="text-[11px] font-semibold text-slate-500 dark:text-slate-400">⏰ ${timeLabel}</div>
+                                    <p class="text-xs text-slate-400 italic">
+                                        ${dayConfig.ragType === 'OPEN' ? 'Self-directed revision' : `All ${dayConfig.ragType.toLowerCase()} topics assigned!`}
+                                    </p>
+                                </div>
+                            `;
+                        }
+                    });
+
+                    // Highlight card if it is today
+                    let cardClasses = isToday 
+                        ? "bg-white dark:bg-slate-800/80 border-2 border-indigo-500 shadow-md ring-2 ring-indigo-500/20 rounded-xl p-3 flex flex-col gap-3 relative"
+                        : "bg-white dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/60 rounded-xl p-3 flex flex-col gap-3 relative";
+
+                    let todayBadge = isToday ? '<span class="absolute -top-2.5 right-3 px-2 py-0.5 bg-indigo-600 text-white font-bold text-[9px] rounded-full shadow">📍 Today</span>' : '';
+
+                    daysGridHTML += `
+                        <div class="${cardClasses}">
+                            ${todayBadge}
+                            <div class="flex items-center justify-between pb-2 border-b border-slate-200 dark:border-slate-700">
+                                <div>
+                                    <h4 class="font-bold text-sm text-slate-900 dark:text-white">${dayConfig.day}</h4>
+                                    <span class="text-[10px] text-slate-400">${dayDate.toLocaleDateString(undefined, {month:'short', day:'numeric'})}</span>
+                                </div>
+                                ${headerBadge}
+                            </div>
+                            <div class="space-y-2 flex-1">${slotsHTML}</div>
+                        </div>
+                    `;
+                });
+
+                daysGridHTML += '</div>';
+                weekSection.innerHTML = weekHeaderHTML + daysGridHTML;
+                container.appendChild(weekSection);
+
+                currWeekStart.setDate(currWeekStart.getDate() + 7);
+                weekCounter++;
+            }
+
+            // Render Leftover / Unassigned Topics List
+            let leftoverRed = redPool.filter(item => !assignedRedKeys.has(item.key));
+            let leftoverAmber = amberPool.filter(item => !assignedAmberKeys.has(item.key));
+
+            if (leftoverRed.length > 0 || leftoverAmber.length > 0) {
+                let overflowDiv = document.createElement('div');
+                overflowDiv.className = "bg-rose-50 dark:bg-rose-950/30 border border-rose-200 dark:border-rose-900 rounded-2xl p-5 space-y-3";
+                
+                let listHTML = `<h4 class="font-bold text-sm text-rose-800 dark:text-rose-300">⚠️ Overflow / Unassigned Topics (Exceeds scheduled slots before Dec 11)</h4><ul class="space-y-2 text-xs text-slate-700 dark:text-slate-300">`;
+                
+                leftoverRed.forEach(item => {
+                    const currentStatus = getItemData(item.key).status;
+                    listHTML += `
+                        <li class="flex items-center justify-between bg-white dark:bg-slate-900 p-2.5 rounded-lg border border-rose-200 dark:border-rose-900 shadow-sm">
+                            <div class="flex items-center gap-2">
+                                <span class="px-1.5 py-0.5 bg-rose-200 text-rose-900 font-bold rounded text-[10px]">RED</span> 
+                                <span><strong>${item.subjectName}:</strong> ${item.subtopic}</span>
+                            </div>
+                            <select onchange="setRAGFromTimetable('${item.key}', this.value)" class="text-[11px] px-2 py-1 rounded border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-semibold focus:outline-none">
+                                <option value="RED" ${currentStatus === 'RED' ? 'selected' : ''}>🔴 Red</option>
+                                <option value="AMBER" ${currentStatus === 'AMBER' ? 'selected' : ''}>🟡 Amber</option>
+                                <option value="GREEN" ${currentStatus === 'GREEN' ? 'selected' : ''}>🟢 Green</option>
+                                <option value="NONE" ${currentStatus === 'NONE' ? 'selected' : ''}>⚪ Unrated</option>
+                            </select>
+                        </li>
+                    `;
+                });
+
+                leftoverAmber.forEach(item => {
+                    const currentStatus = getItemData(item.key).status;
+                    listHTML += `
+                        <li class="flex items-center justify-between bg-white dark:bg-slate-900 p-2.5 rounded-lg border border-amber-200 dark:border-amber-900 shadow-sm">
+                            <div class="flex items-center gap-2">
+                                <span class="px-1.5 py-0.5 bg-amber-200 text-amber-900 font-bold rounded text-[10px]">AMBER</span> 
+                                <span><strong>${item.subjectName}:</strong> ${item.subtopic}</span>
+                            </div>
+                            <select onchange="setRAGFromTimetable('${item.key}', this.value)" class="text-[11px] px-2 py-1 rounded border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-semibold focus:outline-none">
+                                <option value="RED" ${currentStatus === 'RED' ? 'selected' : ''}>🔴 Red</option>
+                                <option value="AMBER" ${currentStatus === 'AMBER' ? 'selected' : ''}>🟡 Amber</option>
+                                <option value="GREEN" ${currentStatus === 'GREEN' ? 'selected' : ''}>🟢 Green</option>
+                                <option value="NONE" ${currentStatus === 'NONE' ? 'selected' : ''}>⚪ Unrated</option>
+                            </select>
+                        </li>
+                    `;
+                });
+
+                listHTML += `</ul>`;
+                overflowDiv.innerHTML = listHTML;
+                container.appendChild(overflowDiv);
+            }
+        }
+
+        function setRAGFromTimetable(key, status) {
+            setRAG(null, key, status);
         }
 
         function renderApp() {
