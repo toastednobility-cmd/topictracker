@@ -1,0 +1,1388 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Abingdon GCSE Revision Tracker</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        abingdon: {
+                            pink: '#c41e3a',
+                            navy: '#0b192c',
+                            gold: '#d4af37',
+                            lightNavy: '#1e293b',
+                            cardDark: '#152033',
+                            borderDark: '#2a3b53',
+                            accentGold: '#f1c40f'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Custom Scrollbars */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(15, 23, 42, 0.6);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(212, 175, 55, 0.4);
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(212, 175, 55, 0.7);
+        }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 font-sans min-h-screen flex flex-col antialiased selection:bg-amber-500 selection:text-slate-950">
+
+    <!-- Top Navigation Header -->
+    <header class="bg-abingdon-navy border-b border-abingdon-borderDark sticky top-0 z-30 shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16 gap-4">
+                
+                <!-- Brand / Logo -->
+                <div class="flex items-center gap-3 shrink-0">
+                    <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-amber-500 to-amber-700 flex items-center justify-center shadow-md border border-amber-300/30">
+                        <i class="fa-solid font-bold text-slate-950 text-xl fa-graduation-cap"></i>
+                    </div>
+                    <div>
+                        <h1 class="font-bold text-lg leading-tight tracking-wide text-white">Abingdon <span class="text-amber-400 font-extrabold">GCSE</span> Tracker</h1>
+                        <p class="text-xs text-slate-400 font-medium">Micro-Concept Granular Specification Tracker</p>
+                    </div>
+                </div>
+
+                <!-- Global Search Bar -->
+                <div class="flex-1 max-w-md hidden md:block relative">
+                    <div class="relative">
+                        <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+                        <input type="text" id="globalSearchInput" placeholder="Search micro-concepts or notes across all specs..." 
+                            class="w-full pl-9 pr-8 py-2 bg-slate-900/90 border border-slate-700 rounded-lg text-sm text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500 transition-all">
+                        <button id="clearSearchBtn" class="hidden absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white">
+                            <i class="fa-solid fa-circle-xmark text-sm"></i>
+                        </button>
+                    </div>
+                    <!-- Global Search Dropdown -->
+                    <div id="searchResultsDropdown" class="hidden absolute top-full left-0 right-0 mt-2 bg-slate-900 border border-slate-700 rounded-lg shadow-2xl max-h-96 overflow-y-auto z-50"></div>
+                </div>
+
+                <!-- Global Actions -->
+                <div class="flex items-center gap-2">
+                    <button id="exportDataBtn" title="Export Progress JSON" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 rounded-lg text-xs font-semibold flex items-center gap-2 transition-all">
+                        <i class="fa-solid fa-download text-amber-400"></i>
+                        <span class="hidden sm:inline">Export</span>
+                    </button>
+                    <label id="importDataLabel" title="Import Progress JSON" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 rounded-lg text-xs font-semibold flex items-center gap-2 cursor-pointer transition-all">
+                        <i class="fa-solid fa-upload text-amber-400"></i>
+                        <span class="hidden sm:inline">Import</span>
+                        <input type="file" id="importDataInput" accept=".json" class="hidden">
+                    </label>
+                    <button id="resetAllBtn" title="Reset All Progress" class="px-3 py-1.5 bg-rose-950/60 hover:bg-rose-900/80 text-rose-300 border border-rose-800/50 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-all">
+                        <i class="fa-solid fa-rotate-left text-xs"></i>
+                        <span class="hidden sm:inline">Reset</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-1 w-full flex flex-col lg:flex-row gap-6">
+
+        <!-- Sidebar Navigation (Subject List & Global Stats) -->
+        <aside class="w-full lg:w-80 shrink-0 flex flex-col gap-6">
+            
+            <!-- Global Stats Summary Card -->
+            <div class="bg-abingdon-cardDark border border-abingdon-borderDark rounded-xl p-5 shadow-lg relative overflow-hidden">
+                <div class="absolute -right-4 -top-4 w-24 h-24 bg-amber-500/10 rounded-full blur-xl pointer-events-none"></div>
+                
+                <h2 class="text-xs uppercase tracking-wider text-slate-400 font-bold mb-3 flex items-center justify-between">
+                    <span>Overall Mastery</span>
+                    <i class="fa-solid fa-chart-pie text-amber-400"></i>
+                </h2>
+
+                <div class="flex items-end justify-between mb-2">
+                    <span id="overallPercentage" class="text-3xl font-black text-amber-400 tracking-tight">0%</span>
+                    <span id="overallStatsRatio" class="text-xs text-slate-400 font-medium">0 / 0 concepts</span>
+                </div>
+
+                <!-- Progress Bar -->
+                <div class="w-full bg-slate-900 rounded-full h-3 flex overflow-hidden p-0.5 border border-slate-800 shadow-inner mb-4">
+                    <div id="globalGreenBar" class="bg-emerald-500 h-full transition-all duration-300" style="width: 0%" title="Green"></div>
+                    <div id="globalAmberBar" class="bg-amber-500 h-full transition-all duration-300" style="width: 0%" title="Amber"></div>
+                    <div id="globalRedBar" class="bg-rose-500 h-full transition-all duration-300" style="width: 0%" title="Red"></div>
+                </div>
+
+                <!-- Legend Breakdown -->
+                <div class="grid grid-cols-4 gap-1.5 text-center text-xs">
+                    <div class="bg-emerald-950/50 border border-emerald-800/40 rounded-lg p-1.5">
+                        <div class="font-bold text-emerald-400 flex items-center justify-center gap-1">
+                            <span id="countGreen">0</span>
+                        </div>
+                        <div class="text-[9px] text-slate-400 uppercase font-semibold mt-0.5">Green</div>
+                    </div>
+                    <div class="bg-amber-950/50 border border-amber-800/40 rounded-lg p-1.5">
+                        <div class="font-bold text-amber-400 flex items-center justify-center gap-1">
+                            <span id="countAmber">0</span>
+                        </div>
+                        <div class="text-[9px] text-slate-400 uppercase font-semibold mt-0.5">Amber</div>
+                    </div>
+                    <div class="bg-rose-950/50 border border-rose-800/40 rounded-lg p-1.5">
+                        <div class="font-bold text-rose-400 flex items-center justify-center gap-1">
+                            <span id="countRed">0</span>
+                        </div>
+                        <div class="text-[9px] text-slate-400 uppercase font-semibold mt-0.5">Red</div>
+                    </div>
+                    <div class="bg-slate-900 border border-slate-800 rounded-lg p-1.5">
+                        <div class="font-bold text-slate-400 flex items-center justify-center gap-1">
+                            <span id="countUnrated">0</span>
+                        </div>
+                        <div class="text-[9px] text-slate-400 uppercase font-semibold mt-0.5">Unrated</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Subject Selector Nav -->
+            <div class="bg-abingdon-cardDark border border-abingdon-borderDark rounded-xl p-4 shadow-lg flex-1">
+                <h2 class="text-xs uppercase tracking-wider text-slate-400 font-bold mb-3 px-2 flex items-center justify-between">
+                    <span>Subjects (10)</span>
+                    <span class="text-[10px] bg-slate-800 px-2 py-0.5 rounded text-amber-400 font-mono">Abingdon Specs</span>
+                </h2>
+
+                <nav id="subjectNavList" class="space-y-1.5 max-h-[calc(100vh-380px)] overflow-y-auto pr-1">
+                    <!-- Subject Items Rendered via JS -->
+                </nav>
+            </div>
+        </aside>
+
+        <!-- Main Workspace Area -->
+        <main class="flex-1 flex flex-col gap-5 min-w-0">
+            
+            <!-- Active Subject Header -->
+            <div class="bg-abingdon-cardDark border border-abingdon-borderDark rounded-xl p-6 shadow-lg flex flex-col md:flex-row md:items-center justify-between gap-4 relative overflow-hidden">
+                <div class="space-y-1">
+                    <div class="flex items-center gap-3 flex-wrap">
+                        <h2 id="currentSubjectTitle" class="text-2xl font-black tracking-tight text-white">Subject Title</h2>
+                        <span id="currentSubjectCode" class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">
+                            Spec Code
+                        </span>
+                    </div>
+                    <p id="currentSubjectBoard" class="text-xs text-slate-400 font-medium">Exam Board Details</p>
+                </div>
+
+                <div class="flex items-center gap-4 bg-slate-900/80 border border-slate-800 px-4 py-2.5 rounded-xl self-start md:self-auto">
+                    <div>
+                        <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Subject Mastery</div>
+                        <div id="subjectMasteryPercent" class="text-xl font-extrabold text-amber-400">0%</div>
+                    </div>
+                    <div class="w-24 bg-slate-800 rounded-full h-2.5 overflow-hidden flex border border-slate-700">
+                        <div id="subjectGreenBar" class="bg-emerald-500 h-full transition-all" style="width: 0%"></div>
+                        <div id="subjectAmberBar" class="bg-amber-500 h-full transition-all" style="width: 0%"></div>
+                        <div id="subjectRedBar" class="bg-rose-500 h-full transition-all" style="width: 0%"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Toolbar & Filter Controls -->
+            <div class="bg-slate-900 border border-abingdon-borderDark rounded-xl p-4 flex flex-wrap items-center justify-between gap-3 shadow-md">
+                
+                <!-- Status Filter Buttons -->
+                <div class="flex items-center gap-1.5 flex-wrap">
+                    <span class="text-xs font-semibold text-slate-400 mr-1 hidden sm:inline">Filter:</span>
+                    <button data-filter="all" class="filter-btn active px-3 py-1.5 rounded-lg text-xs font-bold bg-amber-500 text-slate-950 shadow-md transition-all">
+                        All
+                    </button>
+                    <button data-filter="red" class="filter-btn px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-800 text-rose-400 hover:bg-slate-700 border border-slate-700 transition-all flex items-center gap-1">
+                        <span class="w-2 h-2 rounded-full bg-rose-500"></span> Red
+                    </button>
+                    <button data-filter="amber" class="filter-btn px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-800 text-amber-400 hover:bg-slate-700 border border-slate-700 transition-all flex items-center gap-1">
+                        <span class="w-2 h-2 rounded-full bg-amber-500"></span> Amber
+                    </button>
+                    <button data-filter="green" class="filter-btn px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-800 text-emerald-400 hover:bg-slate-700 border border-slate-700 transition-all flex items-center gap-1">
+                        <span class="w-2 h-2 rounded-full bg-emerald-500"></span> Green
+                    </button>
+                    <button data-filter="starred" class="filter-btn px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-800 text-amber-300 hover:bg-slate-700 border border-slate-700 transition-all flex items-center gap-1">
+                        <i class="fa-solid fa-star text-amber-400 text-[10px]"></i> Starred
+                    </button>
+                    <button data-filter="has_notes" class="filter-btn px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-800 text-cyan-400 hover:bg-slate-700 border border-slate-700 transition-all flex items-center gap-1">
+                        <i class="fa-solid fa-note-sticky text-[10px]"></i> Has Notes
+                    </button>
+                    <button data-filter="unrated" class="filter-btn px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-800 text-slate-400 hover:bg-slate-700 border border-slate-700 transition-all">
+                        Unrated
+                    </button>
+                </div>
+
+                <!-- Global Accordion Toggle & Search -->
+                <div class="flex items-center gap-2 w-full sm:w-auto">
+                    <button id="toggleExpandAllBtn" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-lg text-xs font-bold text-slate-300 transition-all shrink-0 flex items-center gap-1">
+                        <i class="fa-solid fa-angles-down text-[10px]"></i>
+                        <span id="expandBtnLabel">Expand All</span>
+                    </button>
+                    <div class="relative flex-1 sm:w-52">
+                        <i class="fa-solid fa-filter absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 text-xs"></i>
+                        <input type="text" id="subjectSearchInput" placeholder="Filter current spec..." 
+                            class="w-full pl-8 pr-3 py-1.5 bg-slate-950 border border-slate-800 rounded-lg text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-amber-500">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Accordion Modules & Micro-concepts Container -->
+            <div id="topicsContainer" class="space-y-4">
+                <!-- Main Topics & Sub-topics Accordions Rendered via JS -->
+            </div>
+
+            <!-- Empty State -->
+            <div id="emptyState" class="hidden bg-abingdon-cardDark border border-dashed border-slate-700 rounded-xl p-12 text-center">
+                <i class="fa-solid fa-folder-open text-4xl text-slate-600 mb-3"></i>
+                <h3 class="text-base font-bold text-slate-300">No micro-concepts match your current filter</h3>
+                <p class="text-xs text-slate-500 mt-1">Try selecting another filter status or clear your keyword search.</p>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- Application Script Engine -->
+    <script>
+        /**
+         * Ultra-Granular Micro-Concept Specification Data for Abingdon GCSE
+         */
+        const gcseSpecs = [
+            {
+                id: 'latin',
+                name: 'Latin',
+                code: 'J282',
+                board: 'OCR GCSE (9-1)',
+                icon: 'fa-scroll',
+                color: '#e11d48',
+                sections: [
+                    {
+                        title: 'Component 01: Language',
+                        topics: [
+                            {
+                                id: 'lat_noun_cases',
+                                title: 'Nouns, Adjectives & Cases',
+                                desc: 'Detailed case usages, declensions, and agreement rules.',
+                                subtopics: [
+                                    { id: 'lat_m_1', title: '1st, 2nd & 3rd Declension Nouns', desc: 'Recognising and translating regular case endings in singular/plural.' },
+                                    { id: 'lat_m_2', title: '4th & 5th Declension Nouns', desc: 'Forming manus, domus, dies, res across all cases.' },
+                                    { id: 'lat_m_3', title: 'Nominative & Vocative Usage', desc: 'Subject identification and direct address forms.' },
+                                    { id: 'lat_m_4', title: 'Accusative of Motion & Duration', desc: 'ad/in + accusative, duration of time without prepositions.' },
+                                    { id: 'lat_m_5', title: 'Genitive Case Usage', desc: 'Possessive genitive and partitive genitive.' },
+                                    { id: 'lat_m_6', title: 'Dative Indirect Object & Advantage', desc: 'Verbs taking the dative (credo, impero, persuadeo, resists).' },
+                                    { id: 'lat_m_7', title: 'Ablative of Instrument, Manner & Time', desc: 'Ablative of means, manner, time when, and prepositions (a/ab, e/ex, cum, sine, sub).' },
+                                    { id: 'lat_m_8', title: 'Adjective Agreement & Degrees', desc: 'Positive, comparative (-ior), and superlative (-issimus) adjectives.' }
+                                ]
+                            },
+                            {
+                                id: 'lat_verbs_syntax',
+                                title: 'Verbs & Subjunctive Clauses',
+                                desc: 'Morphology, tense recognition, and complex syntactic clauses.',
+                                subtopics: [
+                                    { id: 'lat_m_9', title: 'Indicative Active Tenses', desc: 'Present, imperfect, future, perfect, pluperfect conjugations (1st-4th).' },
+                                    { id: 'lat_m_10', title: 'Passive Voice Forms', desc: 'Present, imperfect, perfect, and pluperfect passive verb structures.' },
+                                    { id: 'lat_m_11', title: 'Deponent & Semi-Deponent Verbs', desc: 'Passive in form, active in meaning (e.g. loquor, proficiscor, sequor).' },
+                                    { id: 'lat_m_12', title: 'Subjunctive Mood: Cum Clauses', desc: 'Cum + imperfect/pluperfect subjunctive (when/since).' },
+                                    { id: 'lat_m_13', title: 'Purpose Clauses (ut / ne)', desc: 'ut / ne + imperfect subjunctive indicating purpose.' },
+                                    { id: 'lat_m_14', title: 'Result Clauses (ut + signpost word)', desc: 'ut + subjunctive triggered by tam, ita, tantus, tot, adeo.' },
+                                    { id: 'lat_m_15', title: 'Indirect Commands & Questions', desc: 'impero/rogo/persuadeo + ut; indirect questions with question words.' },
+                                    { id: 'lat_m_16', title: 'Indirect Statement (Accusative + Infinitive)', desc: 'Subject accusative with present/past/future infinitives after verbs of thinking/saying.' },
+                                    { id: 'lat_m_17', title: 'Participles & Ablative Absolute', desc: 'Present Active (-ns), Perfect Passive (-tus), Perfect Active Deponent participles in noun phrase ablative absolute.' }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        title: 'Components 03-06: Literature & Culture',
+                        topics: [
+                            {
+                                id: 'lat_verse_lit',
+                                title: 'Verse Literature (Virgil / Ovid)',
+                                desc: 'Prescribed verse translation, metre, and stylistic evaluation.',
+                                subtopics: [
+                                    { id: 'lat_m_18', title: 'Prescribed Verse Translation', desc: 'Accurate literal translation of set Virgil/Ovid lines.' },
+                                    { id: 'lat_m_19', title: 'Verse Scansion & Metre', desc: 'Dactylic hexameter: dactyls, spondees, elision, caesura.' },
+                                    { id: 'lat_m_20', title: 'Stylistic Analysis & Rhetoric', desc: 'Identifying and commenting on chiasmus, enjambment, alliteration, word positioning, imagery.' },
+                                    { id: 'lat_m_21', title: 'Literary Context & Themes', desc: 'Heroism, pietas, fate, divine intervention, and tragic portrayal.' }
+                                ]
+                            },
+                            {
+                                id: 'lat_prose_lit',
+                                title: 'Prose Literature (Tacitus / Cicero / Pliny)',
+                                desc: 'Prescribed prose analysis, characterisation, and rhetoric.',
+                                subtopics: [
+                                    { id: 'lat_m_22', title: 'Prescribed Prose Translation', desc: 'Accurate translation of set prose texts.' },
+                                    { id: 'lat_m_23', title: 'Authorial Tone & Bias', desc: 'Evaluating Tacitean irony, Ciceronian rhetoric, or Plinian self-dramatisation.' },
+                                    { id: 'lat_m_24', title: '8-mark & 10-mark Essay Strategy', desc: 'Structuring comparative literary essays with supporting Latin quotations.' }
+                                ]
+                            },
+                            {
+                                id: 'lat_culture',
+                                title: 'Roman Life & Culture',
+                                desc: 'Historical evidence, daily life, and public spectacles.',
+                                subtopics: [
+                                    { id: 'lat_m_25', title: 'Domestic Housing (Domus & Insulae)', desc: 'Atrium, peristylium, cubiculum, insulae living conditions.' },
+                                    { id: 'lat_m_26', title: 'Baths & Socialising (Thermae)', desc: 'Caldarium, frigidarium, tepidarium, palaestra activities.' },
+                                    { id: 'lat_m_27', title: 'Amphitheatre & Gladiatorial Games', desc: 'Types of gladiators (murmillo, retiarius), venue organization, public role.' },
+                                    { id: 'lat_m_28', title: 'Circus Maximus & Chariot Racing', desc: 'Spina, metae, factions (reds, blues, greens, whites), race tactics.' }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                id: 'maths',
+                name: 'Mathematics',
+                code: '4MA1',
+                board: 'Edexcel IGCSE Higher',
+                icon: 'fa-calculator',
+                color: '#2563eb',
+                sections: [
+                    {
+                        title: 'Number & Arithmetic',
+                        topics: [
+                            {
+                                id: 'mth_number_ops',
+                                title: 'Number Operations & Precision',
+                                desc: 'Fractions, decimals, surds, and bounds.',
+                                subtopics: [
+                                    { id: 'mth_m_1', title: 'Converting Recurring Decimals to Fractions', desc: 'Algebraic proof and conversion of recurring decimals.' },
+                                    { id: 'mth_m_2', title: 'Reverse Percentages & Compound Interest', desc: 'Finding original values and multi-year exponential growth/decay calculations.' },
+                                    { id: 'mth_m_3', title: 'Simplifying Surds & Multiplying Surds', desc: '$\sqrt{ab} = \sqrt{a}\sqrt{b}$, expanding brackets with surds.' },
+                                    { id: 'mth_m_4', title: 'Rationalising Denominators', desc: 'Multiplying numerator and denominator by conjugate surd terms.' },
+                                    { id: 'mth_m_5', title: 'Negative & Fractional Index Laws', desc: 'Evaluating $x^{-n}$, $x^{a/b}$, and solving exponential equations.' },
+                                    { id: 'mth_m_6', title: 'Upper & Lower Bounds Calculations', desc: 'Error intervals, bounds in quotient/product physical formulas.' }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        title: 'Algebraic Techniques',
+                        topics: [
+                            {
+                                id: 'mth_algebra_core',
+                                title: 'Manipulating Algebraic Expressions',
+                                desc: 'Expanding, factorising, fractions, and rearranging.',
+                                subtopics: [
+                                    { id: 'mth_m_7', title: 'Expanding Single, Double & Triple Brackets', desc: 'Polynomial multiplication and collecting like terms.' },
+                                    { id: 'mth_m_8', title: 'Factorising Linear Expressions', desc: 'Taking out common numerical and algebraic factors.' },
+                                    { id: 'mth_m_9', title: 'Factorising Quadratics ($x^2+bx+c$ & $ax^2+bx+c$)', desc: 'Factoring quadratics with $a=1$ and $a>1$ using grouping or inspection.' },
+                                    { id: 'mth_m_10', title: 'Difference of Two Squares', desc: 'Recognising and expanding $a^2 - b^2 = (a+b)(a-b)$.' },
+                                    { id: 'mth_m_11', title: 'Completing the Square', desc: 'Expressing $ax^2+bx+c$ as $a(x+p)^2+q$, finding vertex coordinate.' },
+                                    { id: 'mth_m_12', title: 'Solving Quadratics via Quadratic Formula', desc: 'Using $x = \frac{-b \pm \sqrt{b^2-4ac}}{2a}$ with exact surds or rounding.' },
+                                    { id: 'mth_m_13', title: 'Algebraic Fractions (+ - * /)', desc: 'Simplifying, finding common denominators, solving fractional equations.' },
+                                    { id: 'mth_m_14', title: 'Rearranging Complex Formulas', desc: 'Subject appearance multiple times, powers, roots, and factoring.' },
+                                    { id: 'mth_m_15', title: 'Functions $f(x)$, $fg(x)$ & $f^{-1}(x)$', desc: 'Evaluating inputs, composite functions, and finding inverse algebraic functions.' },
+                                    { id: 'mth_m_16', title: 'Basic Calculus & Turning Points', desc: 'Finding $\frac{dy}{dx}$, gradients of tangents, stationary points of curves.' }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        title: 'Geometry & Trigonometry',
+                        topics: [
+                            {
+                                id: 'mth_geom_trig',
+                                title: 'Geometry & Spatial Reasoning',
+                                desc: 'Circle theorems, 3D trig, vectors, and transformations.',
+                                subtopics: [
+                                    { id: 'mth_m_17', title: 'All 8 Circle Theorems & Geometric Reasons', desc: 'Angles at center, angle in semicircle, cyclic quad, alternate segment theorem.' },
+                                    { id: 'mth_m_18', title: 'Sine Rule & Cosine Rule in Non-Right Triangles', desc: 'Finding lengths, obtuse angles, $\text{Area} = \frac{1}{2}ab\sin C$.' },
+                                    { id: 'mth_m_19', title: '3D Pythagoras & 3D Trigonometry', desc: 'Finding diagonals across 3D cuboids, prisms, and pyramids.' },
+                                    { id: 'mth_m_20', title: 'Vector Geometry & Collinearity Proofs', desc: 'Vector routes, showing lines are parallel or points are collinear.' }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                id: 'admaths',
+                name: 'Additional Maths',
+                code: '6993',
+                board: 'OCR FSMQ Level 3',
+                icon: 'fa-square-root-variable',
+                color: '#4f46e5',
+                sections: [
+                    {
+                        title: 'Algebra & Coordinate Geometry',
+                        topics: [
+                            {
+                                id: 'adm_alg_poly',
+                                title: 'Advanced Polynomials & Expansion',
+                                desc: 'Binomial expansion, division, and remainder theorem.',
+                                subtopics: [
+                                    { id: 'adm_m_1', title: 'Binomial Expansion $(a+b)^n$', desc: 'Using Pascal\'s triangle and $\binom{n}{r}$ formula for positive integers.' },
+                                    { id: 'adm_m_2', title: 'Factor Theorem & Remainder Theorem', desc: 'Evaluating $f(a)=0$ to find polynomial factors and long division.' },
+                                    { id: 'adm_m_3', title: 'Solving Linear & Quadratic Inequalities', desc: 'Critical values, sketch method, and interval notation.' }
+                                ]
+                            },
+                            {
+                                id: 'adm_coord_circ',
+                                title: 'Coordinate Geometry of Circles',
+                                desc: 'Cartesian equations, tangents, and normals.',
+                                subtopics: [
+                                    { id: 'adm_m_4', title: 'Equation of Circle $(x-a)^2 + (y-b)^2 = r^2$', desc: 'Completing the square to find center and radius.' },
+                                    { id: 'adm_m_5', title: 'Equations of Tangents & Normals to Circle', desc: 'Perpendicular gradients using radial lines.' }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        title: 'Calculus & Numerical Methods',
+                        topics: [
+                            {
+                                id: 'adm_calc_fsmq',
+                                title: 'Differentiation & Integration',
+                                desc: 'First principles, stationary points, areas, and kinematics.',
+                                subtopics: [
+                                    { id: 'adm_m_6', title: 'Differentiation from First Principles', desc: 'Finding derivative of $x^2, x^3$ using $\lim_{\delta x \to 0}$.' },
+                                    { id: 'adm_m_7', title: 'Stationary Points & Nature Determination', desc: 'Using $\frac{d^2y}{dx^2}$ for max, min, and inflexion points.' },
+                                    { id: 'adm_m_8', title: 'Definite Integration & Area Under Curve', desc: 'Integrating $x^n$ terms, calculating bounded area between curve and axes.' },
+                                    { id: 'adm_m_9', title: 'Kinematics with Calculus ($s, v, a$)', desc: 'Integrating acceleration to velocity, differentiating displacement.' },
+                                    { id: 'adm_m_10', title: 'Newton-Raphson & Numerical Integration', desc: 'Root approximation $x_{n+1} = x_n - \frac{f(x_n)}{f\'(x_n)}$ and Trapezium Rule.' }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                id: 'french',
+                name: 'French',
+                code: '4FR1',
+                board: 'Edexcel IGCSE',
+                icon: 'fa-language',
+                color: '#0284c7',
+                sections: [
+                    {
+                        title: 'Vocabulary & Thematic Modules',
+                        topics: [
+                            {
+                                id: 'fr_vocab_modules',
+                                title: 'Core Themes (1-4)',
+                                desc: 'Topic vocabulary across all IGCSE themes.',
+                                subtopics: [
+                                    { id: 'fr_m_1', title: 'Town, Local Area & Services Vocabulary', desc: 'Describing amenities, directions, public transport, local problems.' },
+                                    { id: 'fr_m_2', title: 'Holidays, Transport & Booking', desc: 'Past holidays, accommodation types, travel arrangements, weather complaints.' },
+                                    { id: 'fr_m_3', title: 'School Rules, Timetable & Uniform', desc: 'Opinions on subjects, teachers, rules, school routine comparison.' },
+                                    { id: 'fr_m_4', title: 'Future Careers & University', desc: 'Part-time jobs, work experience, career ambitions, post-16 choices.' },
+                                    { id: 'fr_m_5', title: 'Family Relationships & Technology', desc: 'Physical/character descriptions, social media pros and cons.' },
+                                    { id: 'fr_m_6', title: 'Environmental & Social Issues', desc: 'Recycling, pollution, climate change, charity work.' }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        title: 'Grammar & Linguistic Precision',
+                        topics: [
+                            {
+                                id: 'fr_grammar_structures',
+                                title: 'Tenses & Complex Syntax',
+                                desc: 'Applying grammatical rules in speaking, reading, and writing.',
+                                subtopics: [
+                                    { id: 'fr_m_7', title: 'Passé Composé (Avoir vs Être)', desc: 'Regular and irregular past participles, agreement with être and direct object.' },
+                                    { id: 'fr_m_8', title: 'Imparfait Formation & Usage', desc: 'Avoir/être stems, ongoing past actions vs completed actions.' },
+                                    { id: 'fr_m_9', title: 'Futur Proche & Futur Simple', desc: 'Aller + infinitive vs future stems (-er, -ir, -re) and irregular stems.' },
+                                    { id: 'fr_m_10', title: 'Conditionnel & Si Clauses', desc: 'If clauses: Si + imparfait -> conditionnel; expressing wishes.' },
+                                    { id: 'fr_m_11', title: 'Present Subjunctive Trigger Forms', desc: 'Il faut que, bien que, pour que + subjunctive endings.' },
+                                    { id: 'fr_m_12', title: 'Direct & Indirect Object Pronouns', desc: 'Positioning le, la, les, lui, leur, y, en in positive/negative sentences.' }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                id: 'geography',
+                name: 'Geography',
+                code: '8035',
+                board: 'AQA GCSE',
+                icon: 'fa-earth-americas',
+                color: '#16a34a',
+                sections: [
+                    {
+                        title: 'Paper 1: Living with the Physical Environment',
+                        topics: [
+                            {
+                                id: 'geo_physical_concepts',
+                                title: 'Natural Hazards & Physical Processes',
+                                desc: 'Tectonics, storms, rivers, coasts, and ecosystems.',
+                                subtopics: [
+                                    { id: 'geo_m_1', title: 'Constructive, Destructive & Conservative Margins', desc: 'Plate movement mechanisms, ridge push, slab pull, landforms created.' },
+                                    { id: 'geo_m_2', title: 'Earthquake Case Studies (HIC vs LIC)', desc: 'Comparison of primary/secondary effects and immediate/long-term responses.' },
+                                    { id: 'geo_m_3', title: 'Tropical Storm Formation & Typhoon Haiyan', desc: 'Sea temp >27°C, Coriolis effect, impacts and management in the Philippines.' },
+                                    { id: 'geo_m_4', title: 'Coastal Erosion Processes & Spit Formation', desc: 'Hydraulic action, abrasion, attrition, longshore drift, spit & salt marsh development.' },
+                                    { id: 'geo_m_5', title: 'River Landforms (Waterfalls to Meanders)', desc: 'Upper course erosion (v-shaped valley, waterfall), middle course deposition (oxbow lakes).' },
+                                    { id: 'geo_m_6', title: 'Hard & Soft Coastal Engineering', desc: 'Sea walls, groynes, rock armour vs beach nourishment, managed retreat.' },
+                                    { id: 'geo_m_7', title: 'Tropical Rainforest Ecosystem & Deforestation', desc: 'Nutrient cycling (Gersmehl diagram), causes and impacts of Amazon deforestation.' }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        title: 'Paper 2 & 3: Human Geography & Fieldwork',
+                        topics: [
+                            {
+                                id: 'geo_human_concepts',
+                                title: 'Urban, Economic & Fieldwork Skills',
+                                desc: 'Cities, development, UK economy, and fieldwork inquiry.',
+                                subtopics: [
+                                    { id: 'geo_m_8', title: 'Urban Growth Case Study: Rio de Janeiro', desc: 'Favelas, favela-bairro project, social/economic opportunities and challenges.' },
+                                    { id: 'geo_m_9', title: 'UK Urban Regeneration Case Study: London', desc: 'Olympic Park regeneration, sustainable urban strategies.' },
+                                    { id: 'geo_m_10', title: 'Development Indicators & Demographic Transition', desc: 'HDI, GNI per capita, DTM stages 1 to 5, population pyramids.' },
+                                    { id: 'geo_m_11', title: 'NEE Case Study: Nigeria', desc: 'Industrial structure shift, TNCs (Shell), environmental impacts, aid effectiveness.' },
+                                    { id: 'geo_m_12', title: 'OS Map Skills & Grid References', desc: '4-figure and 6-figure references, contour line interpretation, calculating gradient.' },
+                                    { id: 'geo_m_13', title: 'Fieldwork Data Representation & Sampling', desc: 'Systematic vs random sampling, risk assessment, data collection methods.' }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                id: 'biology',
+                name: 'Biology',
+                code: '4BI1',
+                board: 'Edexcel IGCSE',
+                icon: 'fa-dna',
+                color: '#059669',
+                sections: [
+                    {
+                        title: 'Organisms & Physiology',
+                        topics: [
+                            {
+                                id: 'bio_cells_phys',
+                                title: 'Cell Biology & Human Physiology',
+                                desc: 'Cells, enzymes, transport, and organ systems.',
+                                subtopics: [
+                                    { id: 'bio_m_1', title: 'Organelle Functions (Plant vs Animal Cells)', desc: 'Nucleus, cytoplasm, membrane, cell wall, mitochondria, chloroplasts, ribosomes, vacuole.' },
+                                    { id: 'bio_m_2', title: 'Enzyme Action & Lock-and-Key Model', desc: 'Active site, substrate, temperature/pH denaturation, optimum conditions.' },
+                                    { id: 'bio_m_3', title: 'Diffusion, Osmosis & Active Transport', desc: 'Concentration gradients, water potential, turgor pressure, ATP energy usage.' },
+                                    { id: 'bio_m_4', title: 'Human Digestive Enzymes & Villi Adaptations', desc: 'Amylase, protease, lipase, bile function, villi surface area & microvilli.' },
+                                    { id: 'bio_m_5', title: 'Aerobic vs Anaerobic Respiration', desc: 'Equations, ATP yield, lactic acid debt in humans, ethanol/CO2 in yeast.' },
+                                    { id: 'bio_m_6', title: 'Heart Structure & Circulatory System', desc: 'Atria, ventricles, valves, coronary arteries, double circulatory loop.' },
+                                    { id: 'bio_m_7', title: 'Nephron Ultrafiltration & Reabsorption', desc: 'Bowman\'s capsule, glomerulus, selective glucose reabsorption, ADH action.' },
+                                    { id: 'bio_m_8', title: 'Reflex Arc & Synaptic Transmission', desc: 'Stimulus, receptor, sensory/relay/motor neurone, neurotransmitter diffusion.' }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        title: 'Genetics, Ecology & Bio-Tech',
+                        topics: [
+                            {
+                                id: 'bio_gen_eco',
+                                title: 'Genetics, Ecology & Biotechnology',
+                                desc: 'DNA, inheritance, food webs, and genetic modification.',
+                                subtopics: [
+                                    { id: 'bio_m_9', title: 'Mitosis vs Meiosis Comparison', desc: '2 diploid identical daughter cells vs 4 haploid genetically varied gametes.' },
+                                    { id: 'bio_m_10', title: 'DNA Structure & Protein Synthesis Steps', desc: 'Double helix, bases (A-T, C-G), transcription (mRNA) and translation (tRNA, codons).' },
+                                    { id: 'bio_m_11', title: 'Monohybrid Crosses & Pedigree Charts', desc: 'Dominant, recessive, homozygous, heterozygous, Punnett square ratios.' },
+                                    { id: 'bio_m_12', title: 'Pyramids of Biomass & Energy Transfer Loss', desc: 'Trophic levels, 10% efficiency loss through heat, movement, excretion.' },
+                                    { id: 'bio_m_13', title: 'Genetic Modification using Plasmids & Enzymes', desc: 'Restriction enzymes, sticky ends, DNA ligase, recombinant plasmid vectors.' },
+                                    { id: 'bio_m_14', title: 'Micropropagation & Animal Cloning Steps', desc: 'Explants, sterile agar, nuclear transfer in enucleated egg cells.' }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                id: 'english',
+                name: 'English (Lang & Lit)',
+                code: '4EA1 / 4ET1',
+                board: 'Edexcel IGCSE',
+                icon: 'fa-book-open-reader',
+                color: '#d97706',
+                sections: [
+                    {
+                        title: 'English Language (4EA1)',
+                        topics: [
+                            {
+                                id: 'eng_lang_concepts',
+                                title: 'Non-Fiction, Poetry & Writing',
+                                desc: 'Textual analysis, comparative essays, and writing skills.',
+                                subtopics: [
+                                    { id: 'eng_m_1', title: 'Unseen Non-Fiction Language Analysis', desc: 'Analyzing rhetoric, metaphors, tone, perspective, sentence structures.' },
+                                    { id: 'eng_m_2', title: 'Anthology Non-Fiction Set Extracts', desc: 'Key quotes and structural motifs in set texts (e.g. Danger of a Single Story, Passage to Africa).' },
+                                    { id: 'eng_m_3', title: 'Comparative Writing Technique', desc: 'Structuring comparative paragraphs with linking connectives and parallel analysis.' },
+                                    { id: 'eng_m_4', title: 'Transactional Writing Formats', desc: 'Writing persuasive speeches, newspaper articles, formal letters, public guides.' },
+                                    { id: 'eng_m_5', title: 'Imaginative / Creative Narrative Writing', desc: 'Show-don\'t-tell, motif repetition, sensory details, dynamic pacing.' }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        title: 'English Literature (4ET1)',
+                        topics: [
+                            {
+                                id: 'eng_lit_concepts',
+                                title: 'Poetry, Drama & Prose Texts',
+                                desc: 'Detailed literary analysis across prescribed texts.',
+                                subtopics: [
+                                    { id: 'eng_m_6', title: 'Anthology Poetry Analysis & Themes', desc: 'Form, metre, stanza structures, speaker voice across set anthology poems.' },
+                                    { id: 'eng_m_7', title: 'Unseen Poetry Comparison', desc: 'Comparing thematic connections, imagery, and poetic choices in unseen poems.' },
+                                    { id: 'eng_m_8', title: 'Shakespeare Play (Macbeth / Romeo & Juliet)', desc: 'Dramatic irony, tragic downfall, soliloquies, Jacobean context, motif analysis.' },
+                                    { id: 'eng_m_9', title: 'Modern Drama (An Inspector Calls)', desc: 'Socialist commentary, Priestley\'s message, Sheila\'s growth, Birling\'s hubris, staging.' },
+                                    { id: 'eng_m_10', title: 'Modern Prose Text (Of Mice and Men)', desc: 'American Dream, loneliness, power dynamics, foreshadowing, context of 1930s USA.' }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                id: 'chemistry',
+                name: 'Chemistry',
+                code: '4CH1',
+                board: 'Edexcel IGCSE',
+                icon: 'fa-flask-vial',
+                color: '#7c3aed',
+                sections: [
+                    {
+                        title: 'Principles & Inorganic Chemistry',
+                        topics: [
+                            {
+                                id: 'chm_core_concepts',
+                                title: 'Atoms, Bonding & Reactions',
+                                desc: 'Atomic structure, bonding models, moles, and ion tests.',
+                                subtopics: [
+                                    { id: 'chm_m_1', title: 'Dot-and-Cross Diagrams (Ionic & Covalent)', desc: 'Representing electron transfer in ionic and shared pairs in simple covalent molecules.' },
+                                    { id: 'chm_m_2', title: 'Metallic Bonding Lattice & Properties', desc: 'Positive metal ions in sea of delocalised electrons, conductivity, malleability.' },
+                                    { id: 'chm_m_3', title: 'Moles, Reacting Masses & Gas Volumes', desc: '$\text{Moles} = \frac{\text{mass}}{M_r}$, $24\text{ dm}^3$ molar volume, concentration calculations.' },
+                                    { id: 'chm_m_4', title: 'Electrolysis of Molten & Aqueous Solutions', desc: 'Anode/cathode rules ($H^+$ vs metal, $OH^-$ vs halide), half-equations with electrons.' },
+                                    { id: 'chm_m_5', title: 'Group 1 & Group 7 Trends', desc: 'Reactivity down Group 1, displacement reactions in Group 7, physical state trends.' },
+                                    { id: 'chm_m_6', title: 'Tests for Anions, Cations & Gases', desc: 'Flame tests, $NaOH$ precipitaion, $AgNO_3$ halides, $BaCl_2$ sulfates, $O_2, H_2, CO_2, Cl_2, NH_3$.' }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        title: 'Physical & Organic Chemistry',
+                        topics: [
+                            {
+                                id: 'chm_phys_org_concepts',
+                                title: 'Energetics, Equilibrium & Organic',
+                                desc: 'Calorimetry, rates, crude oil, and organic families.',
+                                subtopics: [
+                                    { id: 'chm_m_7', title: 'Calorimetry & Enthalpy Changes ($\Delta H$)', desc: '$Q = mc\Delta T$, bond energy calculations (bonds broken - bonds made).' },
+                                    { id: 'chm_m_8', title: 'Dynamic Equilibrium & Le Chatelier\'s Principle', desc: 'Reversible reactions, effect of temperature and pressure on yield.' },
+                                    { id: 'chm_m_9', title: 'Crude Oil Fractions & Catalytic Cracking', desc: 'Fractional distillation column temp gradient, cracking long alkanes to short alkanes + alkenes.' },
+                                    { id: 'chm_m_10', title: 'Alkanes vs Alkenes Addition Reactions', desc: 'Saturated vs unsaturated, UV substitution with $Br_2$ vs bromine water color change.' },
+                                    { id: 'chm_m_11', title: 'Alcohols, Carboxylic Acids & Esterification', desc: 'Oxidation of ethanol to ethanoic acid, reacting with ethanol to form ethyl ethanoate.' },
+                                    { id: 'chm_m_12', title: 'Addition vs Condensation Polymerisation', desc: 'Polyalkenes vs polyesters (dicarboxylic acid + diol releasing $H_2O$).' }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                id: 'physics',
+                name: 'Physics',
+                code: '4PH1',
+                board: 'Edexcel IGCSE',
+                icon: 'fa-atom',
+                color: '#ea580c',
+                sections: [
+                    {
+                        title: 'Mechanics, Electricity & Waves',
+                        topics: [
+                            {
+                                id: 'phy_mech_elec_waves',
+                                title: 'Forces, Electricity & Wave Optics',
+                                desc: 'Kinematics, circuits, optics, and sound.',
+                                subtopics: [
+                                    { id: 'phy_m_1', title: 'Kinematics Equations ($v^2 = u^2 + 2as$)', desc: 'Rearranging uniform acceleration equations and velocity-time area calculations.' },
+                                    { id: 'phy_m_2', title: 'Hooke\'s Law & Elastic Deformation', desc: 'Force-extension graphs, elastic limit, $F = kx$.' },
+                                    { id: 'phy_m_3', title: 'Momentum & Conservation of Momentum', desc: '$p = mv$, impulse, force = rate of change of momentum in collisions.' },
+                                    { id: 'phy_m_4', title: 'Mains Electricity, Fuses & Circuit Safety', desc: 'Earth wire, double insulation, circuit breakers, power equations $P=IV, P=I^2R$.' },
+                                    { id: 'phy_m_5', title: 'Series vs Parallel I-V Characteristics', desc: 'Current splitting, voltage distribution, LDR and thermistor behaviors.' },
+                                    { id: 'phy_m_6', title: 'Refraction & Critical Angle Calculation', desc: 'Snell\'s law $n = \frac{\sin i}{\sin r}$, total internal reflection, $\sin c = \frac{1}{n}$.' }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        title: 'Matter, Electromagnetism & Space',
+                        topics: [
+                            {
+                                id: 'phy_matter_em_space',
+                                title: 'Thermal, Magnetism & Nuclear',
+                                desc: 'Gases, motors, transformers, decay, and cosmology.',
+                                subtopics: [
+                                    { id: 'phy_m_7', title: 'Density, Hydrostatic Pressure & Gas Laws', desc: '$\rho = \frac{m}{V}$, $p = h\rho g$, Boyle\'s law $p_1V_1 = p_2V_2$, pressure law $\frac{p_1}{T_1} = \frac{p_2}{T_2}$.' },
+                                    { id: 'phy_m_8', title: 'Motor Effect & Fleming\'s Left-Hand Rule', desc: 'Force on conductor in magnetic field, electric motor rotation mechanism.' },
+                                    { id: 'phy_m_9', title: 'Transformer Equation & Efficiency', desc: '$\frac{V_p}{V_s} = \frac{N_p}{N_s}$, $V_p I_p = V_s I_s$ for 100% efficiency step-up/down.' },
+                                    { id: 'phy_m_10', title: 'Radioactive Decay Equations & Half-Life Graphs', desc: 'Alpha, beta, gamma emission equations, finding half-life from decay curves.' },
+                                    { id: 'phy_m_11', title: 'Nuclear Fission vs Nuclear Fusion', desc: 'Uranium-235 neutron capture & chain reaction vs fusing hydrogen nuclei in stellar cores.' },
+                                    { id: 'phy_m_12', title: 'Stellar Evolution Lifecycle', desc: 'Nebula -> main sequence -> red giant/supergiant -> white dwarf / neutron star / black hole.' },
+                                    { id: 'phy_m_13', title: 'Cosmology, Redshift & CMBR Evidence', desc: 'Doppler effect in galaxy light, Big Bang theory evidence.' }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                id: 'cs',
+                name: 'Computer Science',
+                code: '8525',
+                board: 'AQA GCSE',
+                icon: 'fa-code',
+                color: '#0d9488',
+                sections: [
+                    {
+                        title: 'Paper 1: Computational Thinking & Programming',
+                        topics: [
+                            {
+                                id: 'cs_alg_prog_concepts',
+                                title: 'Algorithms & Practical Programming',
+                                desc: 'Searching, sorting, control structures, and testing.',
+                                subtopics: [
+                                    { id: 'cs_m_1', title: 'Linear Search vs Binary Search', desc: 'Algorithm trace, comparison count, requirement for sorted data in binary search.' },
+                                    { id: 'cs_m_2', title: 'Bubble Sort vs Merge Sort Algorithm Steps', desc: 'Comparing pass mechanisms, efficiency, and trace table execution.' },
+                                    { id: 'cs_m_3', title: 'Flowchart Symbols & Trace Tables', desc: 'Input/output, decision, process symbols; tracing variable changes line-by-line.' },
+                                    { id: 'cs_m_4', title: 'Selection & Iteration Control Structures', desc: 'IF-ELIF-ELSE, FOR count-controlled, WHILE condition-controlled loops.' },
+                                    { id: 'cs_m_5', title: 'Subroutines, Parameters & Local Scope', desc: 'Function parameters, return values, avoiding global state pollution.' },
+                                    { id: 'cs_m_6', title: '1D & 2D Arrays Data Structures', desc: 'Declaring, indexing, traversing 2D matrices using nested loops.' },
+                                    { id: 'cs_m_7', title: 'Input Validation & Test Data Selection', desc: 'Range/length checks, testing with Normal, Boundary, and Erroneous data.' }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        title: 'Paper 2: Computing Concepts & Systems',
+                        topics: [
+                            {
+                                id: 'cs_sys_net_security',
+                                title: 'Data, Systems, Networks & SQL',
+                                desc: 'Binary, CPU, networking, cyber threats, and databases.',
+                                subtopics: [
+                                    { id: 'cs_m_8', title: 'Binary, Hexadecimal & Two\'s Complement', desc: 'Base 2/10/16 conversions, binary addition overflow, representing negative numbers.' },
+                                    { id: 'cs_m_9', title: 'Character Encoding (ASCII vs Unicode)', desc: '7-bit ASCII vs multi-byte Unicode capacity for foreign scripts/emojis.' },
+                                    { id: 'cs_m_10', title: 'Image & Sound Representation Principles', desc: 'Color depth, resolution, sample rate, bit depth calculation for file sizes.' },
+                                    { id: 'cs_m_11', title: 'CPU Registers & Fetch-Decode-Execute Cycle', desc: 'MAR, MDR, Program Counter, Accumulator, ALU, and Control Unit roles.' },
+                                    { id: 'cs_m_12', title: 'RAM, ROM & Secondary Storage Types', desc: 'Volatile vs non-volatile, Solid State (flash), Optical, Magnetic drive mechanics.' },
+                                    { id: 'cs_m_13', title: 'TCP/IP 4-Layer Stack & Network Protocols', desc: 'Application, Transport, Internet, Link layers; HTTP, HTTPS, FTP, SMTP, IMAP.' },
+                                    { id: 'cs_m_14', title: 'Cyber Threats & Defensive Strategies', desc: 'Phishing, social engineering, SQL injection, firewalls, anti-malware, penetration testing.' },
+                                    { id: 'cs_m_15', title: 'Relational Databases & SQL Queries', desc: 'Primary/foreign keys, writing SELECT... FROM... WHERE... ORDER BY... queries.' },
+                                    { id: 'cs_m_16', title: 'Legislation: DPA 2018 & Computer Misuse Act', desc: 'Data protection principles and illegal access offenses.' }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        ];
+
+        /**
+         * State Management
+         */
+        let state = {
+            currentSubjectId: 'latin',
+            filter: 'all',
+            searchQuery: '',
+            expandAll: false,
+            // Format: { [subtopicId]: { rag: 'red'|'amber'|'green'|null, note: string, starred: boolean } }
+            userProgress: {}
+        };
+
+        const STORAGE_KEY = 'abingdon_gcse_revision_tracker_v3';
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadStateFromStorage();
+            initUI();
+            renderSubjectNav();
+            renderCurrentSubject();
+            updateGlobalStats();
+        });
+
+        function loadStateFromStorage() {
+            try {
+                const saved = localStorage.getItem(STORAGE_KEY);
+                if (saved) {
+                    const parsed = JSON.parse(saved);
+                    state.userProgress = parsed.userProgress || {};
+                    if (parsed.currentSubjectId && gcseSpecs.some(s => s.id === parsed.currentSubjectId)) {
+                        state.currentSubjectId = parsed.currentSubjectId;
+                    }
+                }
+            } catch (e) {
+                console.error("Failed to load progress from localStorage", e);
+            }
+        }
+
+        function saveStateToStorage() {
+            try {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify({
+                    userProgress: state.userProgress,
+                    currentSubjectId: state.currentSubjectId
+                }));
+            } catch (e) {
+                console.error("Failed to save progress to localStorage", e);
+            }
+        }
+
+        function initUI() {
+            // Filter Buttons
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    document.querySelectorAll('.filter-btn').forEach(b => {
+                        b.classList.remove('active', 'bg-amber-500', 'text-slate-950');
+                        b.classList.add('bg-slate-800');
+                    });
+                    const target = e.currentTarget;
+                    target.classList.remove('bg-slate-800');
+                    target.classList.add('active', 'bg-amber-500', 'text-slate-950');
+                    
+                    state.filter = target.dataset.filter;
+                    renderCurrentSubject();
+                });
+            });
+
+            // Local Search
+            document.getElementById('subjectSearchInput').addEventListener('input', (e) => {
+                state.searchQuery = e.target.value.toLowerCase().trim();
+                renderCurrentSubject();
+            });
+
+            // Global Search
+            const globalSearchInput = document.getElementById('globalSearchInput');
+            const clearSearchBtn = document.getElementById('clearSearchBtn');
+            const searchResultsDropdown = document.getElementById('searchResultsDropdown');
+
+            globalSearchInput.addEventListener('input', (e) => {
+                const query = e.target.value.toLowerCase().trim();
+                if (query.length > 0) {
+                    clearSearchBtn.classList.remove('hidden');
+                    renderGlobalSearchResults(query);
+                } else {
+                    clearSearchBtn.classList.add('hidden');
+                    searchResultsDropdown.classList.add('hidden');
+                }
+            });
+
+            clearSearchBtn.addEventListener('click', () => {
+                globalSearchInput.value = '';
+                clearSearchBtn.classList.add('hidden');
+                searchResultsDropdown.classList.add('hidden');
+            });
+
+            document.addEventListener('click', (e) => {
+                if (!globalSearchInput.contains(e.target) && !searchResultsDropdown.contains(e.target)) {
+                    searchResultsDropdown.classList.add('hidden');
+                }
+            });
+
+            // Expand/Collapse All Toggle
+            const toggleExpandAllBtn = document.getElementById('toggleExpandAllBtn');
+            toggleExpandAllBtn.addEventListener('click', () => {
+                state.expandAll = !state.expandAll;
+                document.getElementById('expandBtnLabel').innerText = state.expandAll ? 'Collapse All' : 'Expand All';
+                renderCurrentSubject();
+            });
+
+            // Export Data
+            document.getElementById('exportDataBtn').addEventListener('click', exportData);
+
+            // Import Data
+            document.getElementById('importDataInput').addEventListener('change', importData);
+
+            // Reset All
+            document.getElementById('resetAllBtn').addEventListener('click', () => {
+                if (confirm('Are you sure you want to reset all micro-concept RAG ratings, notes, and stars across all 10 subjects?')) {
+                    state.userProgress = {};
+                    saveStateToStorage();
+                    renderSubjectNav();
+                    renderCurrentSubject();
+                    updateGlobalStats();
+                }
+            });
+        }
+
+        /**
+         * Render Subject List in Sidebar
+         */
+        function renderSubjectNav() {
+            const nav = document.getElementById('subjectNavList');
+            nav.innerHTML = '';
+
+            gcseSpecs.forEach(subj => {
+                const isSelected = subj.id === state.currentSubjectId;
+                const stats = calculateSubjectStats(subj.id);
+
+                const btn = document.createElement('button');
+                btn.className = `w-full text-left p-3 rounded-xl border transition-all flex items-center justify-between gap-3 ${
+                    isSelected 
+                        ? 'bg-slate-800 border-amber-500/60 shadow-md ring-1 ring-amber-500/30' 
+                        : 'bg-slate-900/60 border-slate-800/80 hover:bg-slate-800/60 hover:border-slate-700'
+                }`;
+
+                btn.onclick = () => {
+                    state.currentSubjectId = subj.id;
+                    saveStateToStorage();
+                    renderSubjectNav();
+                    renderCurrentSubject();
+                };
+
+                btn.innerHTML = `
+                    <div class="flex items-center gap-3 min-w-0">
+                        <div class="w-9 h-9 rounded-lg flex items-center justify-center shrink-0" style="background-color: ${subj.color}20; color: ${subj.color}; border: 1px solid ${subj.color}40">
+                            <i class="fa-solid ${subj.icon} text-sm"></i>
+                        </div>
+                        <div class="truncate">
+                            <div class="font-bold text-sm text-slate-100 truncate">${subj.name}</div>
+                            <div class="text-[10px] text-slate-400 font-mono">${subj.code}</div>
+                        </div>
+                    </div>
+                    <div class="text-right shrink-0">
+                        <div class="text-xs font-black ${stats.percentage === 100 ? 'text-emerald-400' : 'text-amber-400'}">${stats.percentage}%</div>
+                        <div class="text-[9px] text-slate-400 font-medium">${stats.greenCount}/${stats.totalSubtopics}</div>
+                    </div>
+                `;
+
+                nav.appendChild(btn);
+            });
+        }
+
+        /**
+         * Render Active Subject Content & Accordion Modules
+         */
+        function renderCurrentSubject() {
+            const subj = gcseSpecs.find(s => s.id === state.currentSubjectId);
+            if (!subj) return;
+
+            document.getElementById('currentSubjectTitle').innerText = subj.name;
+            document.getElementById('currentSubjectCode').innerText = subj.code;
+            document.getElementById('currentSubjectBoard').innerText = subj.board;
+
+            const stats = calculateSubjectStats(subj.id);
+            document.getElementById('subjectMasteryPercent').innerText = `${stats.percentage}%`;
+            document.getElementById('subjectGreenBar').style.width = `${(stats.greenCount / Math.max(1, stats.totalSubtopics)) * 100}%`;
+            document.getElementById('subjectAmberBar').style.width = `${(stats.amberCount / Math.max(1, stats.totalSubtopics)) * 100}%`;
+            document.getElementById('subjectRedBar').style.width = `${(stats.redCount / Math.max(1, stats.totalSubtopics)) * 100}%`;
+
+            const container = document.getElementById('topicsContainer');
+            const emptyState = document.getElementById('emptyState');
+            container.innerHTML = '';
+            let totalRenderedSubtopics = 0;
+
+            subj.sections.forEach(section => {
+                const sectionContainer = document.createElement('div');
+                sectionContainer.className = 'space-y-3';
+
+                const secTitle = document.createElement('h3');
+                secTitle.className = 'text-xs uppercase font-extrabold tracking-wider text-slate-400 pl-1 flex items-center gap-2 mt-2';
+                secTitle.innerHTML = `<i class="fa-solid fa-layer-group text-amber-500 text-[11px]"></i> ${section.title}`;
+                sectionContainer.appendChild(secTitle);
+
+                let sectionHasMatchingSubtopics = false;
+
+                section.topics.forEach(topic => {
+                    // Filter subtopics
+                    const matchingSubtopics = topic.subtopics.filter(sub => {
+                        const prog = state.userProgress[sub.id] || {};
+                        const rag = prog.rag || 'unrated';
+                        const isStarred = !!prog.starred;
+                        const hasNotes = !!(prog.note && prog.note.trim().length > 0);
+
+                        if (state.filter === 'red' && rag !== 'red') return false;
+                        if (state.filter === 'amber' && rag !== 'amber') return false;
+                        if (state.filter === 'green' && rag !== 'green') return false;
+                        if (state.filter === 'starred' && !isStarred) return false;
+                        if (state.filter === 'has_notes' && !hasNotes) return false;
+                        if (state.filter === 'unrated' && rag !== 'unrated') return false;
+
+                        if (state.searchQuery) {
+                            const q = state.searchQuery;
+                            const matchSubTitle = sub.title.toLowerCase().includes(q);
+                            const matchSubDesc = sub.desc.toLowerCase().includes(q);
+                            const matchTopicTitle = topic.title.toLowerCase().includes(q);
+                            const matchNote = (prog.note || '').toLowerCase().includes(q);
+                            if (!matchSubTitle && !matchSubDesc && !matchTopicTitle && !matchNote) return false;
+                        }
+
+                        return true;
+                    });
+
+                    if (matchingSubtopics.length === 0) return;
+
+                    sectionHasMatchingSubtopics = true;
+                    totalRenderedSubtopics += matchingSubtopics.length;
+
+                    // Compute Topic Badge Stats
+                    let topGreen = 0;
+                    topic.subtopics.forEach(s => {
+                        if (state.userProgress[s.id]?.rag === 'green') topGreen++;
+                    });
+
+                    // Create Topic Accordion Group
+                    const topicAccordion = document.createElement('div');
+                    topicAccordion.className = 'bg-abingdon-cardDark border border-abingdon-borderDark rounded-xl overflow-hidden shadow-lg';
+
+                    const isExpanded = state.expandAll || state.searchQuery.length > 0 || state.filter !== 'all';
+
+                    topicAccordion.innerHTML = `
+                        <!-- Accordion Header -->
+                        <div class="accordion-header p-4 bg-slate-900/60 hover:bg-slate-800/80 cursor-pointer flex items-center justify-between gap-3 border-b border-slate-800/80 transition-colors select-none">
+                            <div class="flex items-center gap-3 min-w-0">
+                                <i class="fa-solid fa-chevron-right accordion-arrow text-slate-400 text-xs transition-transform ${isExpanded ? 'rotate-90 text-amber-400' : ''}"></i>
+                                <div class="truncate">
+                                    <h4 class="font-bold text-slate-100 text-sm sm:text-base">${topic.title}</h4>
+                                    <p class="text-xs text-slate-400 truncate">${topic.desc}</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-2 shrink-0">
+                                <span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-slate-800 text-amber-400 border border-slate-700">
+                                    ${topGreen} / ${topic.subtopics.length} Green
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Accordion Body / Subtopics List -->
+                        <div class="accordion-body ${isExpanded ? '' : 'hidden'} p-3 sm:p-4 space-y-3 bg-slate-950/40">
+                            <!-- Subtopic Cards rendered below -->
+                        </div>
+                    `;
+
+                    const headerEl = topicAccordion.querySelector('.accordion-header');
+                    const bodyEl = topicAccordion.querySelector('.accordion-body');
+                    const arrowEl = topicAccordion.querySelector('.accordion-arrow');
+
+                    headerEl.onclick = () => {
+                        const hidden = bodyEl.classList.toggle('hidden');
+                        if (hidden) {
+                            arrowEl.classList.remove('rotate-90', 'text-amber-400');
+                        } else {
+                            arrowEl.classList.add('rotate-90', 'text-amber-400');
+                        }
+                    };
+
+                    matchingSubtopics.forEach(sub => {
+                        const subCard = createSubtopicCard(sub);
+                        bodyEl.appendChild(subCard);
+                    });
+
+                    sectionContainer.appendChild(topicAccordion);
+                });
+
+                if (sectionHasMatchingSubtopics) {
+                    container.appendChild(sectionContainer);
+                }
+            });
+
+            if (totalRenderedSubtopics === 0) {
+                emptyState.classList.remove('hidden');
+            } else {
+                emptyState.classList.add('hidden');
+            }
+        }
+
+        /**
+         * Create Subtopic Card with Controls
+         */
+        function createSubtopicCard(sub) {
+            const prog = state.userProgress[sub.id] || { rag: null, note: '', starred: false };
+            const card = document.createElement('div');
+            card.className = `bg-slate-900/90 border ${
+                prog.starred ? 'border-amber-500/50 ring-1 ring-amber-500/20' : 'border-slate-800'
+            } rounded-lg p-3.5 shadow-sm space-y-2.5 hover:border-slate-700 transition-all`;
+
+            const currentRag = prog.rag;
+
+            card.innerHTML = `
+                <div class="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
+                    <div class="space-y-0.5 flex-1 min-w-0">
+                        <div class="flex items-center gap-2">
+                            <button class="star-btn text-slate-600 hover:text-amber-400 transition-colors ${prog.starred ? 'text-amber-400' : ''}" title="Star Sub-Topic">
+                                <i class="fa-solid fa-star text-sm"></i>
+                            </button>
+                            <h5 class="font-bold text-slate-200 text-xs sm:text-sm leading-tight">${sub.title}</h5>
+                        </div>
+                        <p class="text-[11px] text-slate-400 leading-normal pl-5">${sub.desc}</p>
+                    </div>
+
+                    <!-- RAG Rating Selector -->
+                    <div class="flex items-center gap-1 self-start sm:self-auto bg-slate-950 p-1 rounded-lg border border-slate-800 shrink-0">
+                        <button class="rag-btn px-2 py-0.5 rounded text-[11px] font-bold transition-all flex items-center gap-1 ${
+                            currentRag === 'red' ? 'bg-rose-500 text-white shadow' : 'bg-slate-900 text-rose-400 hover:bg-slate-800'
+                        }" data-rag="red">
+                            <span class="w-1.5 h-1.5 rounded-full bg-rose-400"></span> Red
+                        </button>
+
+                        <button class="rag-btn px-2 py-0.5 rounded text-[11px] font-bold transition-all flex items-center gap-1 ${
+                            currentRag === 'amber' ? 'bg-amber-500 text-slate-950 shadow' : 'bg-slate-900 text-amber-400 hover:bg-slate-800'
+                        }" data-rag="amber">
+                            <span class="w-1.5 h-1.5 rounded-full bg-amber-400"></span> Amber
+                        </button>
+
+                        <button class="rag-btn px-2 py-0.5 rounded text-[11px] font-bold transition-all flex items-center gap-1 ${
+                            currentRag === 'green' ? 'bg-emerald-500 text-white shadow' : 'bg-slate-900 text-emerald-400 hover:bg-slate-800'
+                        }" data-rag="green">
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> Green
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Notes Input -->
+                <div class="pl-5 pt-0.5">
+                    <div class="relative">
+                        <textarea placeholder="Add specific formulas, definitions or revision reminders..." 
+                            class="sub-note-input w-full bg-slate-950/80 border border-slate-800/80 rounded p-2 text-[11px] text-slate-200 placeholder-slate-500 focus:outline-none focus:border-amber-500/60 focus:bg-slate-950 transition-all resize-y min-h-[36px]" rows="1">${prog.note || ''}</textarea>
+                        <div class="note-saved-indicator hidden absolute right-2 bottom-1.5 text-[9px] text-emerald-400 font-semibold flex items-center gap-0.5 pointer-events-none">
+                            <i class="fa-solid fa-check text-[8px]"></i> Saved
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            // CRITICAL FIX: Prevent click events on star, RAG buttons, or text input from bubbling up to accordions
+            card.addEventListener('click', (e) => e.stopPropagation());
+
+            // Star Event
+            card.querySelector('.star-btn').onclick = (e) => {
+                e.stopPropagation();
+                if (!state.userProgress[sub.id]) state.userProgress[sub.id] = { rag: null, note: '', starred: false };
+                state.userProgress[sub.id].starred = !state.userProgress[sub.id].starred;
+                saveStateToStorage();
+                renderCurrentSubject();
+            };
+
+            // RAG Events
+            card.querySelectorAll('.rag-btn').forEach(btn => {
+                btn.onclick = (e) => {
+                    e.stopPropagation();
+                    const selectedRag = btn.dataset.rag;
+                    if (!state.userProgress[sub.id]) state.userProgress[sub.id] = { rag: null, note: '', starred: false };
+                    
+                    if (state.userProgress[sub.id].rag === selectedRag) {
+                        state.userProgress[sub.id].rag = null;
+                    } else {
+                        state.userProgress[sub.id].rag = selectedRag;
+                    }
+
+                    saveStateToStorage();
+                    renderCurrentSubject();
+                    renderSubjectNav();
+                    updateGlobalStats();
+                };
+            });
+
+            // Note Saver
+            const noteInput = card.querySelector('.sub-note-input');
+            const noteSavedIndicator = card.querySelector('.note-saved-indicator');
+            let saveTimeout = null;
+
+            noteInput.addEventListener('click', (e) => e.stopPropagation());
+            noteInput.addEventListener('focus', (e) => e.stopPropagation());
+
+            noteInput.addEventListener('input', (e) => {
+                e.stopPropagation();
+                clearTimeout(saveTimeout);
+                saveTimeout = setTimeout(() => {
+                    if (!state.userProgress[sub.id]) state.userProgress[sub.id] = { rag: null, note: '', starred: false };
+                    state.userProgress[sub.id].note = noteInput.value;
+                    saveStateToStorage();
+
+                    noteSavedIndicator.classList.remove('hidden');
+                    setTimeout(() => noteSavedIndicator.classList.add('hidden'), 1200);
+                }, 400);
+            });
+
+            return card;
+        }
+
+        /**
+         * Global Search Renderer Across Subtopics
+         */
+        function renderGlobalSearchResults(query) {
+            const dropdown = document.getElementById('searchResultsDropdown');
+            dropdown.innerHTML = '';
+            let matches = [];
+
+            gcseSpecs.forEach(subj => {
+                subj.sections.forEach(sec => {
+                    sec.topics.forEach(top => {
+                        top.subtopics.forEach(sub => {
+                            const note = (state.userProgress[sub.id]?.note || '').toLowerCase();
+                            if (sub.title.toLowerCase().includes(query) || sub.desc.toLowerCase().includes(query) || top.title.toLowerCase().includes(query) || note.includes(query)) {
+                                matches.push({ subject: subj, topic: top, subtopic: sub });
+                            }
+                        });
+                    });
+                });
+            });
+
+            if (matches.length === 0) {
+                dropdown.innerHTML = `
+                    <div class="p-4 text-xs text-slate-400 text-center">
+                        No micro-concepts found matching "<span class="text-slate-200">${query}</span>"
+                    </div>
+                `;
+            } else {
+                matches.slice(0, 8).forEach(match => {
+                    const rag = state.userProgress[match.subtopic.id]?.rag;
+                    let ragBadge = '<span class="w-2 h-2 rounded-full bg-slate-600"></span>';
+                    if (rag === 'green') ragBadge = '<span class="w-2 h-2 rounded-full bg-emerald-500"></span>';
+                    if (rag === 'amber') ragBadge = '<span class="w-2 h-2 rounded-full bg-amber-500"></span>';
+                    if (rag === 'red') ragBadge = '<span class="w-2 h-2 rounded-full bg-rose-500"></span>';
+
+                    const item = document.createElement('div');
+                    item.className = 'p-3 hover:bg-slate-800 cursor-pointer border-b border-slate-800/60 last:border-none flex items-center justify-between gap-3 transition-colors';
+                    item.onclick = () => {
+                        state.currentSubjectId = match.subject.id;
+                        state.searchQuery = match.subtopic.title.toLowerCase();
+                        document.getElementById('subjectSearchInput').value = match.subtopic.title;
+                        saveStateToStorage();
+                        renderSubjectNav();
+                        renderCurrentSubject();
+                        dropdown.classList.add('hidden');
+                        document.getElementById('globalSearchInput').value = '';
+                        document.getElementById('clearSearchBtn').classList.add('hidden');
+                    };
+
+                    item.innerHTML = `
+                        <div class="min-w-0 flex-1">
+                            <div class="flex items-center gap-2">
+                                ${ragBadge}
+                                <span class="text-xs font-bold text-slate-200 truncate">${match.subtopic.title}</span>
+                            </div>
+                            <div class="text-[10px] text-slate-400 truncate mt-0.5">${match.subject.name} &bull; ${match.topic.title}</div>
+                        </div>
+                        <i class="fa-solid fa-arrow-right text-xs text-slate-500"></i>
+                    `;
+                    dropdown.appendChild(item);
+                });
+            }
+
+            dropdown.classList.remove('hidden');
+        }
+
+        /**
+         * Calculate subject sub-topic stats
+         */
+        function calculateSubjectStats(subjectId) {
+            const subj = gcseSpecs.find(s => s.id === subjectId);
+            if (!subj) return { totalSubtopics: 0, greenCount: 0, amberCount: 0, redCount: 0, percentage: 0 };
+
+            let totalSubtopics = 0;
+            let greenCount = 0;
+            let amberCount = 0;
+            let redCount = 0;
+
+            subj.sections.forEach(sec => {
+                sec.topics.forEach(t => {
+                    t.subtopics.forEach(sub => {
+                        totalSubtopics++;
+                        const rag = state.userProgress[sub.id]?.rag;
+                        if (rag === 'green') greenCount++;
+                        else if (rag === 'amber') amberCount++;
+                        else if (rag === 'red') redCount++;
+                    });
+                });
+            });
+
+            const percentage = totalSubtopics > 0 ? Math.round((greenCount / totalSubtopics) * 100) : 0;
+            return { totalSubtopics, greenCount, amberCount, redCount, percentage };
+        }
+
+        /**
+         * Overall stats update
+         */
+        function updateGlobalStats() {
+            let totalSubtopics = 0;
+            let totalGreen = 0;
+            let totalAmber = 0;
+            let totalRed = 0;
+
+            gcseSpecs.forEach(subj => {
+                subj.sections.forEach(sec => {
+                    sec.topics.forEach(t => {
+                        t.subtopics.forEach(sub => {
+                            totalSubtopics++;
+                            const rag = state.userProgress[sub.id]?.rag;
+                            if (rag === 'green') totalGreen++;
+                            else if (rag === 'amber') totalAmber++;
+                            else if (rag === 'red') totalRed++;
+                        });
+                    });
+                });
+            });
+
+            const unrated = totalSubtopics - (totalGreen + totalAmber + totalRed);
+            const overallPercent = totalSubtopics > 0 ? Math.round((totalGreen / totalSubtopics) * 100) : 0;
+
+            document.getElementById('overallPercentage').innerText = `${overallPercent}%`;
+            document.getElementById('overallStatsRatio').innerText = `${totalGreen} / ${totalSubtopics} concepts`;
+
+            document.getElementById('globalGreenBar').style.width = `${(totalGreen / Math.max(1, totalSubtopics)) * 100}%`;
+            document.getElementById('globalAmberBar').style.width = `${(totalAmber / Math.max(1, totalSubtopics)) * 100}%`;
+            document.getElementById('globalRedBar').style.width = `${(totalRed / Math.max(1, totalSubtopics)) * 100}%`;
+
+            document.getElementById('countGreen').innerText = totalGreen;
+            document.getElementById('countAmber').innerText = totalAmber;
+            document.getElementById('countRed').innerText = totalRed;
+            document.getElementById('countUnrated').innerText = unrated;
+        }
+
+        /**
+         * Export
+         */
+        function exportData() {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(state.userProgress, null, 2));
+            const downloadAnchor = document.createElement('a');
+            downloadAnchor.setAttribute("href", dataStr);
+            downloadAnchor.setAttribute("download", `Abingdon_GCSE_MicroConcepts_Backup_${new Date().toISOString().slice(0, 10)}.json`);
+            document.body.appendChild(downloadAnchor);
+            downloadAnchor.click();
+            downloadAnchor.remove();
+        }
+
+        /**
+         * Import
+         */
+        function importData(e) {
+            const fileReader = new FileReader();
+            if (!e.target.files || !e.target.files[0]) return;
+
+            fileReader.readAsText(e.target.files[0], "UTF-8");
+            fileReader.onload = (event) => {
+                try {
+                    const imported = JSON.parse(event.target.result);
+                    if (imported && typeof imported === 'object') {
+                        state.userProgress = imported;
+                        saveStateToStorage();
+                        renderSubjectNav();
+                        renderCurrentSubject();
+                        updateGlobalStats();
+                        alert('Revision progress successfully imported!');
+                    } else {
+                        throw new Error('Invalid JSON format');
+                    }
+                } catch (err) {
+                    alert('Error loading file. Please upload a valid JSON backup file.');
+                }
+            };
+        }
+    </script>
+</body>
+</html>
