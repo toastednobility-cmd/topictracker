@@ -108,7 +108,7 @@
                     <!-- Subject Select Dropdown -->
                     <div class="w-full md:w-1/4">
                         <select id="subjectFilter" onchange="applyFilters()" class="w-full px-3 py-2 border border-slate-300 dark:border-slate-700 dark:bg-slate-800 dark:text-white rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white">
-                            <option value="ALL">All 7 Subjects</option>
+                            <option value="ALL">All 5 Subjects</option>
                         </select>
                     </div>
 
@@ -545,102 +545,6 @@
                 ]
             },
             {
-                id: 'maths',
-                name: 'Mathematics',
-                examBoard: 'Edexcel IGCSE Higher (4MA1)',
-                topics: [
-                    {
-                        title: '1. Number',
-                        subtopics: [
-                            'Fractions, Decimals & Converting recurring decimals to fractions',
-                            'Laws of indices, negative and fractional indices',
-                            'Standard Form calculations & real-world problems',
-                            'Surds simplification, expanding brackets & rationalising denominators',
-                            'Percentages: Reverse percentage, compound interest & depreciation',
-                            'Ratio & Proportion: Direct ($y = kx$) & Inverse ($y = k/x$) proportion',
-                            'Upper and Lower Bounds calculations & error intervals'
-                        ]
-                    },
-                    {
-                        title: '2. Algebra',
-                        subtopics: [
-                            'Expanding & Factorising: Linear, quadratic, difference of two squares & triple brackets',
-                            'Algebraic Fractions: Simplifying, arithmetic operations & solving equations',
-                            'Completing the square $a(x+p)^2 + q$ & finding turning points',
-                            'Simultaneous equations: Linear & non-linear quadratic/circle intersections',
-                            'Inequalities: Linear, quadratic inequalities & graphical shaded regions',
-                            'Functions: Domain, range, composite $fg(x)$ & inverse $f^{-1}(x)$',
-                            'Calculus: Basic differentiation $\\frac{dy}{dx} = nax^{n-1}$ & stationary turning points',
-                            'Sequences: nth term of arithmetic & quadratic sequences'
-                        ]
-                    },
-                    {
-                        title: '3. Geometry & Trigonometry',
-                        subtopics: [
-                            'Circle Theorems: Angle at centre, cyclic quadrilaterals, alternate segment theorem, tangents',
-                            'Trigonometry: Right-angled SOHCAHTOA, 3D Pythagoras & 3D Trigonometry',
-                            'Sine & Cosine Rules: Non-right angled triangles & Ambiguous case of Sine rule',
-                            'Area of Triangle: $\\frac{1}{2}ab\\sin C$',
-                            'Vectors: Column vectors, geometric vector proofs & collinear points',
-                            'Similar Shapes: Length, Area ($k^2$) and Volume ($k^3$) scale factors',
-                            'Transformations: Translations, Reflections, Rotations & Enlargements with negative/fractional scale factors'
-                        ]
-                    },
-                    {
-                        title: '4. Statistics & Probability',
-                        subtopics: [
-                            'Cumulative Frequency graphs, median & interquartile range (IQR)',
-                            'Histograms: Frequency density calculation with unequal class intervals',
-                            'Probability tree diagrams, conditional probability $P(A|B)$ & Venn diagrams set notation'
-                        ]
-                    }
-                ]
-            },
-            {
-                id: 'admaths',
-                name: 'Additional Maths',
-                examBoard: 'OCR FSMQ (6993)',
-                topics: [
-                    {
-                        title: '1. Algebra & Enumeration',
-                        subtopics: [
-                            'Binomial Expansion $(a+b)^n$ for positive integer $n$',
-                            'Polynomials: Factor theorem, Remainder theorem & solving cubic equations',
-                            'Algebraic Proof of identities and inequalities'
-                        ]
-                    },
-                    {
-                        title: '2. Co-ordinate Geometry',
-                        subtopics: [
-                            'Straight lines: $y-y_1 = m(x-x_1)$, parallel/perpendicular gradient rules ($m_1 m_2 = -1$)',
-                            'Circle equations $(x-a)^2 + (y-b)^2 = r^2$, line-circle intersections & tangents'
-                        ]
-                    },
-                    {
-                        title: '3. Trigonometry',
-                        subtopics: [
-                            'Identities: $\\tan\\theta = \\frac{\\sin\\theta}{\\cos\\theta}$, $\\sin^2\\theta + \\cos^2\\theta = 1$',
-                            'Trigonometric equations in degrees and radians'
-                        ]
-                    },
-                    {
-                        title: '4. Calculus & Kinematics',
-                        subtopics: [
-                            'Differentiation: First principles, tangents/normals, stationary points & nature',
-                            'Integration: Indefinite integrals, definite integrals & area under curves',
-                            'Kinematics: Displacement $s(t)$, velocity $v(t)$, acceleration $a(t)$ calculus applications'
-                        ]
-                    },
-                    {
-                        title: '5. Numerical Methods',
-                        subtopics: [
-                            'Trapezium Rule for estimating area under curves',
-                            'Newton-Raphson & Interval Halving root finding methods'
-                        ]
-                    }
-                ]
-            },
-            {
                 id: 'computerscience',
                 name: 'Computer Science',
                 examBoard: 'AQA (8525)',
@@ -786,7 +690,7 @@
         function initApp() {
             initDarkMode();
 
-            const saved = localStorage.getItem('abingdon_gcse_tracker_v12');
+            const saved = localStorage.getItem('abingdon_gcse_tracker_v13');
             if (saved) {
                 try {
                     const parsed = JSON.parse(saved);
@@ -823,7 +727,7 @@
                 customWeekendAssignments: customWeekendAssignments,
                 historySnapshots: historySnapshots
             };
-            localStorage.setItem('abingdon_gcse_tracker_v12', JSON.stringify(payload));
+            localStorage.setItem('abingdon_gcse_tracker_v13', JSON.stringify(payload));
             calculateOverallStats();
             updateSubjectBars();
         }
@@ -1386,7 +1290,6 @@
             `;
 
             filteredSnapshots.forEach(snap => {
-                // If a specific subject is selected, pull data from the subjects sub-object (falling back gracefully if recorded before subject tracking)
                 let dataSrc = snap;
                 if (selectedSubject !== 'ALL' && snap.subjects && snap.subjects[selectedSubject]) {
                     dataSrc = snap.subjects[selectedSubject];
